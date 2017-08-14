@@ -321,4 +321,4 @@ Please [contact us](https://github.com/Absio/cs-absio-secured-container/issues) 
 
 ## License Agreement
 
-See the LICENSE file of the module.
+See the [LICENSE](LICENSE.txt) file of the module.
