@@ -171,6 +171,13 @@ namespace ContainerCrudUtility
                 Console.WriteLine($"Container ID : {container.Id.ToString()}");
                 Console.WriteLine($"Type : {container.Metadata.Type}");
                 Console.WriteLine($"Size : {container.Metadata.Length} bytes");
+                Console.WriteLine($"Header : {container.ContainerHeader?.CustomHeader}");
+                string content = null;
+                if (container.Content != null)
+                {
+                    content = System.Text.Encoding.Default.GetString(container.Content);
+                }
+                Console.WriteLine($"Content : {content}");
                 if (container.Metadata.CreatedAt != null)
                 {
                     Console.WriteLine(
@@ -230,6 +237,7 @@ namespace ContainerCrudUtility
                 }
 
                 var type = options.Type;
+                var header = options.Header;
 
                 Console.WriteLine("Would you like to grant access to other users? Yes/No");
                 var response = Console.ReadLine();
@@ -262,7 +270,7 @@ namespace ContainerCrudUtility
                     }
                 }
 
-                var containerId = _session.CreateAsync(content, null, access, type).Result;
+                var containerId = _session.CreateAsync(content, header, access, type).Result;
 
                 Console.WriteLine($"Successfully created container : {containerId}");
                 Console.WriteLine();
@@ -373,6 +381,7 @@ namespace ContainerCrudUtility
                 }
 
                 var type = options.Type;
+                var header = options.Header;
 
                 List<ContainerAccessLevel> access = null;
                 Console.WriteLine("Would you like to grant access to other users? Yes/No");
@@ -404,7 +413,7 @@ namespace ContainerCrudUtility
                 }
 
                 var containerId = options.Id;
-                _session.UpdateAsync(containerId, content, null, access, type).Wait();
+                _session.UpdateAsync(containerId, content, header, access, type).Wait();
 
                 Console.WriteLine($"Successfully updated container : {containerId.ToString()}");
                 Console.WriteLine();
@@ -427,6 +436,9 @@ namespace ContainerCrudUtility
 
                 [Option("type", Required = false)]
                 public string Type { get; set; }
+
+                [Option("header", Required = false)]
+                public string Header { get; set; }
 
                 #endregion
             }
@@ -497,6 +509,9 @@ namespace ContainerCrudUtility
 
                 [Option("type", Required = false)]
                 public string Type { get; set; }
+
+                [Option("header", Required = false)]
+                public string Header { get; set; }
 
                 #endregion
             }
