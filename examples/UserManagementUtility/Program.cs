@@ -21,6 +21,7 @@ namespace UserManagementUtility
         private static SecuredContainerSession _session;
         private static SessionAttributes _sessionAttributes;
         private static Guid? _userId;
+        public const string ApplicationName = "cs-cli-user-mgmt-app";
 
         #endregion
 
@@ -73,7 +74,8 @@ namespace UserManagementUtility
             }
 
             _sessionAttributes = new SessionAttributes(parsed.ApiKey, parsed.Url,
-                Path.Combine(Directory.GetCurrentDirectory(), "data"));
+                Path.Combine(Directory.GetCurrentDirectory(), "data"), false,
+                ApplicationName);
             _session = new SecuredContainerSession(_sessionAttributes);
 
             //Start prompt with completions

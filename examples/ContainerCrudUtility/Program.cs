@@ -22,6 +22,7 @@ namespace ContainerCrudUtility
         private static SecuredContainerSession _session;
         private static SessionAttributes _sessionAttributes;
         private static Guid _userId;
+        public const string ApplicationName = "cs-cli-crud-app";
 
         #endregion
 
@@ -41,7 +42,8 @@ namespace ContainerCrudUtility
             }
 
             _sessionAttributes = new SessionAttributes(parsed.ApiKey, parsed.Url,
-                Path.Combine(Directory.GetCurrentDirectory(), "data"));
+                Path.Combine(Directory.GetCurrentDirectory(), "data"), false,
+                ApplicationName);
             _session = new SecuredContainerSession(_sessionAttributes);
 
             //Start prompt with completions
