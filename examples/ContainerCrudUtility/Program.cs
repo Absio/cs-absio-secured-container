@@ -453,6 +453,10 @@ namespace ContainerCrudUtility
                     else
                     {
                         Console.WriteLine($"There was some error trying to update the following ID: {options.Id}.");
+                        foreach (Exception ex in e.InnerExceptions)
+                        {
+                            Console.WriteLine($"Next Exception: {ex.Message}.");
+                        }
                     }
 
                     return string.Empty;
