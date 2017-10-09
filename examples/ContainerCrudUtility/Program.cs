@@ -1,8 +1,10 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using Absio.Sdk.Container;
 using Absio.Sdk.Events;
+using Absio.Sdk.Exceptions;
 using Absio.Sdk.Session;
 using Colorful;
 using CommandLine;
@@ -295,7 +297,16 @@ namespace ContainerCrudUtility
                     }
                     catch (AggregateException e)
                     {
-                        Console.WriteLine(e.InnerException?.Message);
+                        if (e.InnerExceptions.Count > 0 && e.InnerExceptions[0] is NotFoundException)
+                        {
+                            Console.WriteLine($"Cannot delete the container since none was found with ID: {options.Id}.");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"There was some error trying to delete the following ID: {options.Id}.");
+                        }
+
+                        return string.Empty;
                     }
                     catch (Exception e)
                     {
@@ -350,15 +361,29 @@ namespace ContainerCrudUtility
 
             private string RunReadCommand(ReadOptions options)
             {
-                var container = _session.ReadAsync(options.Id).Result;
-                PrintContainerToConsole(container);
-
-                if (!string.IsNullOrEmpty(options.File))
+                try
                 {
-                    using (var stream = File.OpenWrite(options.File))
+                    var container = _session.ReadAsync(options.Id).Result;
+                    PrintContainerToConsole(container);
+
+                    if (!string.IsNullOrEmpty(options.File))
                     {
-                        stream.WriteAsync(container.Content, 0, container.Content.Length).Wait();
-                        Console.WriteLine($"Container decrypted to {options.File}");
+                        using (var stream = File.OpenWrite(options.File))
+                        {
+                            stream.WriteAsync(container.Content, 0, container.Content.Length).Wait();
+                            Console.WriteLine($"Container decrypted to {options.File}");
+                        }
+                    }
+                }
+                catch (AggregateException e)
+                {
+                    if (e.InnerExceptions.Count > 0 && e.InnerExceptions[0] is NotFoundException)
+                    {
+                        Console.WriteLine($"Container not found with ID: {options.Id}.");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"There was some error trying to read the following ID: {options.Id}.");
                     }
                 }
 
@@ -384,36 +409,54 @@ namespace ContainerCrudUtility
                 var header = options.Header;
 
                 List<ContainerAccessLevel> access = null;
-                Console.WriteLine("Would you like to grant access to other users? Yes/No");
-                var response = Console.ReadLine();
-                if (response.Equals("y", StringComparison.CurrentCultureIgnoreCase) ||
-                    response.Equals("yes", StringComparison.CurrentCultureIgnoreCase))
+                if (header != null || options.File != null)
                 {
-                    Console.WriteLine("Enter user ID, ");
-
-                    access = new List<ContainerAccessLevel>();
-
-                    while (true)
+                    Console.WriteLine("Would you like to grant access to other users? Yes/No");
+                    var response = Console.ReadLine();
+                    if (response.Equals("y", StringComparison.CurrentCultureIgnoreCase) ||
+                        response.Equals("yes", StringComparison.CurrentCultureIgnoreCase))
                     {
-                        response = Console.ReadLine();
+                        Console.WriteLine("Enter user ID, ");
 
-                        if (response.Equals("done", StringComparison.CurrentCultureIgnoreCase) ||
-                            string.IsNullOrEmpty(response))
+                        access = new List<ContainerAccessLevel>();
+
+                        while (true)
                         {
-                            break;
-                        }
+                            response = Console.ReadLine();
 
-                        var parserResult = Parser.Default.ParseArguments<AccessOptions>(response.Split());
-                        var accessOptions = parserResult.MapResult(opts => opts, null);
-                        var permission = (Permission) accessOptions.Permission;
-                        var accessLevel =
-                            new ContainerAccessLevel(accessOptions.UserId, permission, accessOptions.Expiration);
-                        access.Add(accessLevel);
+                            if (response.Equals("done", StringComparison.CurrentCultureIgnoreCase) ||
+                                string.IsNullOrEmpty(response))
+                            {
+                                break;
+                            }
+
+                            var parserResult = Parser.Default.ParseArguments<AccessOptions>(response.Split());
+                            var accessOptions = parserResult.MapResult(opts => opts, null);
+                            var permission = (Permission) accessOptions.Permission;
+                            var accessLevel =
+                                new ContainerAccessLevel(accessOptions.UserId, permission, accessOptions.Expiration);
+                            access.Add(accessLevel);
+                        }
                     }
                 }
-
                 var containerId = options.Id;
-                _session.UpdateAsync(containerId, content, header, access, type).Wait();
+                try
+                {
+                    _session.UpdateAsync(containerId, content, header, access, type).Wait();
+                }
+                catch (AggregateException e)
+                {
+                    if (e.InnerExceptions.Count > 0 && e.InnerExceptions[0] is NotFoundException)
+                    {
+                        Console.WriteLine($"Cannot upate the container since none was found with ID: {options.Id}.");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"There was some error trying to update the following ID: {options.Id}.");
+                    }
+
+                    return string.Empty;
+                }
 
                 Console.WriteLine($"Successfully updated container : {containerId.ToString()}");
                 Console.WriteLine();
