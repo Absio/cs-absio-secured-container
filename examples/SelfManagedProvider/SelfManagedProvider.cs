@@ -35,7 +35,7 @@ namespace SelfManagedProvider
             var securedContainer = await ServerCacheOfsProvider.ContainerEncryptionService.EncryptAsync(container);
 
             var encryptedData = securedContainer.Bytes();
-            var newContainer = await SecuredContainer.CreateAsync(new byte[0], securedContainer.Metadata);
+            var newContainer = await SecuredContainer.CreateAsync(null, securedContainer.Metadata);
 
             await ServerCacheOfsProvider.ServerProvider.SecuredContainerMapper.CreateOrUpdateAsync(newContainer);
             await ServerCacheOfsProvider.OfsProvider.CreateAsync(newContainer);
@@ -48,7 +48,7 @@ namespace SelfManagedProvider
         /// </summary>
         public async Task DeleteAsync(Guid containerId)
         {
-            await ServerCacheOfsProvider.DeleteUserAsync();
+            await ServerCacheOfsProvider.DeleteAsync(containerId);
         }
 
         /// <summary>
@@ -56,8 +56,8 @@ namespace SelfManagedProvider
         /// </summary>
         public async Task<IContainer> GetAsync(Guid containerId, byte[] encryptedData)
         {
-            var securedContainer = await ServerCacheOfsProvider.ServerProvider.GetSecuredContainerAsync(containerId);
-            var newContainer = await SecuredContainer.CreateAsync(encryptedData, securedContainer.Metadata);
+            var metadata = await ServerCacheOfsProvider.GetMetadataAsync(containerId);
+            var newContainer = await SecuredContainer.CreateAsync(encryptedData, metadata);
             return await ServerCacheOfsProvider.ContainerEncryptionService.DecryptAsync(newContainer);
         }
 
