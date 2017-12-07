@@ -1,26 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Absio.Sdk.Crypto;
-using Absio.Sdk.Session;
+﻿using Absio.Sdk.Providers;
 using Colorful;
 using CommandLine;
 using Common;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 using Console = Colorful.Console;
 
 // Warnings disabled based on CommandLine requirements
 // ReSharper disable ClassNeverInstantiated.Local
 // ReSharper disable UnusedAutoPropertyAccessor.Local
-
 namespace UserManagementUtility
 {
-    internal class Program
+    public class Program : BaseProgram
     {
         #region Static Fields and Constants
-
-        private static SecuredContainerSession _session;
-        private static SessionAttributes _sessionAttributes;
-        private static Guid? _userId;
         public const string ApplicationName = "cs-cli-user-mgmt-app";
 
         #endregion
@@ -39,28 +34,11 @@ namespace UserManagementUtility
             }
         }
 
-        public static string SessionInfo
-        {
-            get
-            {
-                var sessionInfo = "Api Key : " + _sessionAttributes.ApiKey;
-                sessionInfo += "\n";
-                sessionInfo += "Host : " + _sessionAttributes.ServerUrl;
-                sessionInfo += "\n";
-                if (_userId != null)
-                {
-                    sessionInfo += "User : " + _userId;
-                    sessionInfo += "\n";
-                }
-                return sessionInfo;
-            }
-        }
-
         #endregion
 
         #region Private and Protected Methods
 
-        private static void Main(string[] args)
+        public static void Main(string[] args)
         {
             ProgramOptions parsed = null;
             IEnumerable<Error> notParsed = null;
@@ -73,10 +51,15 @@ namespace UserManagementUtility
                 return;
             }
 
-            _sessionAttributes = new SessionAttributes(parsed.ApiKey, parsed.Url,
-                Path.Combine(Directory.GetCurrentDirectory(), "data"), false,
-                ApplicationName);
-            _session = new SecuredContainerSession(_sessionAttributes);
+            _apiKey = parsed.ApiKey;
+            _serverUrl = parsed.Url;
+            if (!SetProviderType(parsed.Provider))
+            {
+                ShowMessageAndWaitForKeyPress("Invalid Provider Type.  Must be Ofs, Server or ServerCacheOfs.");
+                return;
+            }
+            _baseDir = Path.Combine(Directory.GetCurrentDirectory(), "data");
+            InitializeProvider(ApplicationName);
 
             //Start prompt with completions
             ShowLoggedOutPrompt();
@@ -88,13 +71,7 @@ namespace UserManagementUtility
 
             // Show startup message
             var startupMsg = new Figlet().ToAscii("Absio").ConcreteValue;
-            startupMsg += "\n";
-            startupMsg += "Api Key : " + _sessionAttributes.ApiKey;
-            startupMsg += "\n";
-            startupMsg += "Host : " + _sessionAttributes.ServerUrl;
-            startupMsg += "\n";
-            startupMsg += "User : " + _userId;
-            startupMsg += "\n";
+            startupMsg += SessionInfo;
 
             var eval = new LoggedInCommandEvaluator();
 
@@ -131,48 +108,14 @@ namespace UserManagementUtility
 
         #region  Classes
 
-        [Verb("changecredentials", HelpText =
-            "Changes a user's password, backup passphrase, and optional passphrase reminder.")]
-        public class ChangeCredentialsOptions
-        {
-            #region Properties, Indexers
-
-            [Option(Required = true)]
-            public string Passphrase { get; set; }
-
-            [Option(Required = true)]
-            public string Password { get; set; }
-
-            [Option(Required = false)]
-            public string Reminder { get; set; }
-
-            #endregion
-        }
-
-        [Verb("deleteuser", HelpText = "Deletes a user from the Absio server and removes all local data.")]
-        public class DeleteUserOptions
-        {
-        }
-
-        [Verb("getreminder", HelpText = "Retrieves a user's backup reminder.")]
-        public class GetReminderOptions
-        {
-            #region Properties, Indexers
-
-            [Option(Required = true)]
-            public string UserId { get; set; }
-
-            #endregion
-        }
-
         public class LoggedInCommandEvaluator
         {
             #region Static Fields and Constants
 
             public static readonly List<string> Commands = new List<string>
             {
-                "changepassword",
-                "changepassphrase",
+                "changecredentials",
+                "changeprovider",
                 "deleteuser",
                 "getreminder",
                 "logout"
@@ -185,11 +128,12 @@ namespace UserManagementUtility
             public string HandleCommand(string command)
             {
                 Parser.Default
-                    .ParseArguments<DeleteUserOptions, ChangeCredentialsOptions, GetReminderOptions, LogoutOptions>(
-                        command.Split())
+                    .ParseArguments<DeleteUserOptions, ChangeCredentialsOptions, ChangeProviderOptions, 
+                        GetReminderOptions, LogoutOptions>(command.Split())
                     .MapResult(
                         (DeleteUserOptions opts) => RunDeleteUserCommand(),
                         (ChangeCredentialsOptions opts) => RunChangeCredentialsCommand(opts),
+                        (ChangeProviderOptions opts) => RunChangeProviderCommand(opts),
                         (GetReminderOptions opts) => RunGetReminderCommand(opts),
                         (LogoutOptions opts) => RunLogOutCommand(),
                         errs => HandleErrors());
@@ -207,19 +151,12 @@ namespace UserManagementUtility
                 return string.Empty;
             }
 
-            private static void ResetSession()
-            {
-                _session.Logout();
-                _userId = null;
-                _session = new SecuredContainerSession(_sessionAttributes);
-            }
-
             private string RunChangeCredentialsCommand(ChangeCredentialsOptions opts)
             {
                 string message = null;
                 try
                 {
-                    _session.ChangeCredentialsAsync(opts.Password, opts.Passphrase, opts.Reminder).Wait();
+                    ChangeCredentialsWithProvider(opts.Password, opts.Passphrase, opts.Reminder);
 
                     message = "Passphase and reminder changed.";
 
@@ -237,6 +174,29 @@ namespace UserManagementUtility
                 return message;
             }
 
+            private string RunChangeProviderCommand(ChangeProviderOptions opts)
+            {
+                var providerType = opts.Provider;
+
+                if (!SetProviderType(providerType))
+                {
+                    var error = "Invalid Provider Type.  Must be Ofs, Server or ServerCacheOfs.";
+                    Console.WriteLine(error);
+                    return error;
+                }
+
+                // Get the KeyRing...
+                var keyRing = _provider.KeyRing;
+
+                // reset the provider
+                ResetSession(ApplicationName);
+
+                // Authenticate with the KeyRing.
+                _provider.LogInAsync(keyRing);
+
+                return string.Empty;
+            }
+
             private string RunDeleteUserCommand()
             {
                 Console.WriteLine("Are you sure you want to delete this user? Yes/No");
@@ -248,7 +208,7 @@ namespace UserManagementUtility
                 {
                     try
                     {
-                        _session.DeleteUserAsync().Wait();
+                        _provider.DeleteUserAsync().Wait();
                         ShowMessageAndWaitForKeyPress("User has been deleted.");
                         ShowLoggedOutPrompt();
                     }
@@ -271,7 +231,7 @@ namespace UserManagementUtility
                 try
                 {
                     var userId = new Guid(opts.UserId);
-                    reminder = _session.GetBackupReminderAsync(userId).Result;
+                    reminder = GetReminderFromProvider(userId);
 
                     Console.WriteLine("Reminder : " + reminder);
                 }
@@ -289,7 +249,7 @@ namespace UserManagementUtility
 
             private string RunLogOutCommand()
             {
-                ResetSession();
+                ResetSession(ApplicationName);
 
                 ShowMessageAndWaitForKeyPress("User logged out.");
 
@@ -300,6 +260,29 @@ namespace UserManagementUtility
             #endregion
 
             #region  Classes
+
+            [Verb("changecredentials", HelpText =
+                "Changes a user's password, backup passphrase, and optional passphrase reminder.")]
+            public class ChangeCredentialsOptions
+            {
+                #region Properties, Indexers
+
+                [Option(Required = true)]
+                public string Passphrase { get; set; }
+
+                [Option(Required = true)]
+                public string Password { get; set; }
+
+                [Option(Required = false)]
+                public string Reminder { get; set; }
+
+                #endregion
+            }
+
+            [Verb("deleteuser", HelpText = "Deletes a user from the Absio server and removes all local data.")]
+            public class DeleteUserOptions
+            {
+            }
 
             [Verb("logout", HelpText = "Logs out a user and resets the session.")]
             public class LogoutOptions
@@ -314,7 +297,7 @@ namespace UserManagementUtility
             #region Static Fields and Constants
 
             public static readonly List<string> Commands =
-                new List<string> {"register", "login", "getreminder", "resetpassword"};
+                new List<string> {"register", "login", "getreminder", "resetpassword", "changeprovider"};
 
             #endregion
 
@@ -323,12 +306,13 @@ namespace UserManagementUtility
             public string HandleCommand(string command)
             {
                 Parser.Default
-                    .ParseArguments<RegisterOptions, LoginOptions, GetReminderOptions>(
+                    .ParseArguments<RegisterOptions, LoginOptions, GetReminderOptions, ChangeProviderOptions>(
                         command.Split())
                     .MapResult(
                         (RegisterOptions opts) => RunRegisterCommand(opts),
                         (LoginOptions opts) => RunLoginCommand(opts),
                         (GetReminderOptions opts) => RunGetReminderCommand(opts),
+                        (ChangeProviderOptions opts) => RunChangeProviderCommand(opts),
                         errs => HandleErrors());
 
                 return "";
@@ -350,7 +334,7 @@ namespace UserManagementUtility
                 try
                 {
                     var userId = new Guid(opts.UserId);
-                    reminder = _session.GetBackupReminderAsync(userId).Result;
+                    reminder = GetReminderFromProvider(userId);
 
                     Console.WriteLine("Reminder : " + reminder);
                 }
@@ -371,7 +355,7 @@ namespace UserManagementUtility
                 try
                 {
                     var userId = new Guid(opts.UserId);
-                    _session.LogInAsync(userId, opts.Password, opts.Passphrase).Wait();
+                    _provider.LogInAsync(userId, opts.Password, opts.Passphrase).Wait();
                     _userId = userId;
                     ShowLoggedInPrompt();
                 }
@@ -391,7 +375,7 @@ namespace UserManagementUtility
             {
                 try
                 {
-                    _userId = _session.RegisterAsync(opts.Password, opts.Passphrase, opts.Reminder).Result;
+                    _userId = RegisterWithProvider(opts.Password, opts.Passphrase, opts.Reminder);
                     ShowLoggedInPrompt();
                 }
                 catch (AggregateException e)
@@ -405,6 +389,34 @@ namespace UserManagementUtility
 
                 return "";
             }
+
+            private string RunChangeProviderCommand(ChangeProviderOptions opts)
+            {
+                var providerType = opts.Provider;
+
+                if (!SetProviderType(providerType))
+                {
+                    var error = "Invalid Provider Type.  Must be Ofs, Server or ServerCacheOfs.";
+                    Console.WriteLine(error);
+                    return error;
+                }
+
+                // reset the provider
+                ResetSession(ApplicationName);
+
+                return string.Empty;
+            }
+
+            #endregion
+        }
+
+        [Verb("changeprovider", HelpText = "Changes the provider.  Must be: Ofs, Server or ServerCacheOfs.")]
+        public class ChangeProviderOptions
+        {
+            #region Properties, Indexers
+
+            [Option(Required = true)]
+            public string Provider { get; set; }
 
             #endregion
         }
@@ -422,19 +434,6 @@ namespace UserManagementUtility
 
             [Option(Required = true)]
             public string UserId { get; set; }
-
-            #endregion
-        }
-
-        public class ProgramOptions
-        {
-            #region Properties, Indexers
-
-            [Option(Required = true)]
-            public string ApiKey { get; set; }
-
-            [Option(Required = true)]
-            public string Url { get; set; }
 
             #endregion
         }
@@ -457,5 +456,16 @@ namespace UserManagementUtility
         }
 
         #endregion
+
+        [Verb("getreminder", HelpText = "Retrieves a user's backup reminder.")]
+        public class GetReminderOptions
+        {
+            #region Properties, Indexers
+
+            [Option(Required = true)]
+            public string UserId { get; set; }
+
+            #endregion
+        }
     }
 }
