@@ -40,7 +40,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AbsioCrypto, Version=1.4.0.0, Culture=neutral, PublicKeyToken=1d4ee9d1b67c81cc, processorArchitecture=MSIL">
-      <HintPath>..\packages\AbsioCrypto.1.4.0-rc-6\lib\netstandard11\AbsioCrypto.dll</HintPath>
+      <HintPath>..\packages\AbsioCrypto.1.4.0\lib\netstandard11\AbsioCrypto.dll</HintPath>
     </Reference>
     <Reference Include="AbsioESQLite.Bindings.Common, Version=1.0.1.0, Culture=neutral, PublicKeyToken=1d4ee9d1b67c81cc, processorArchitecture=MSIL">
       <HintPath>..\packages\AbsioESQLite.1.0.2\lib\net45\AbsioESQLite.Bindings.Common.dll</HintPath>
@@ -52,7 +52,7 @@
       <HintPath>..\packages\AbsioESQLite.1.0.2\lib\net45\AbsioESQLite.Core.dll</HintPath>
     </Reference>
     <Reference Include="AbsioSdk, Version=1.2.0.0, Culture=neutral, PublicKeyToken=1d4ee9d1b67c81cc, processorArchitecture=MSIL">
-      <HintPath>..\packages\AbsioSdk.1.2.0-rc-12\lib\netstandard13\AbsioSdk.dll</HintPath>
+      <HintPath>..\packages\AbsioSdk.1.2.0\lib\netstandard13\AbsioSdk.dll</HintPath>
     </Reference>
     <Reference Include="Colorful.Console, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Colorful.Console.1.1.2\lib\net461\Colorful.Console.dll</HintPath>
