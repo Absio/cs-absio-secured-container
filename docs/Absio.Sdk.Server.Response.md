@@ -1,9 +1,9 @@
-## `ContainerDownloadInfo`
+## `ContainerInfoJson`
 
-Contains information for downloading an IContainer from the Absio API server.
+Contains information for downloading an IContainer from the Absio Broker application.
 ```csharp
-public class Absio.Sdk.Server.Response.ContainerDownloadInfo
-    : IEquatable<ContainerDownloadInfo>
+public class Absio.Sdk.Server.Response.ContainerInfoJson
+    : IEquatable<ContainerInfoJson>
 
 ```
 
@@ -11,24 +11,26 @@ Properties
 
 | Type | Name | Summary | 
 | --- | --- | --- | 
-| `Byte[]` | Content | The decrypted content of this container. | 
+| `List<ContainerAccessLevel>` | Access | The access list of the container from the Absio Broker application. | 
+| `ContainerMetadata` | Metadata | The metadata for the container from the Absio Broker application. | 
+| `UrlInfoJson` | UrlInfo | The URL information to download the encrypted container from the Absio Broker application's storage location. | 
 
 
 Methods
 
 | Type | Name | Summary | 
 | --- | --- | --- | 
-| `Boolean` | Equals(`ContainerDownloadInfo` other) |  | 
+| `Boolean` | Equals(`ContainerInfoJson` other) |  | 
 | `Boolean` | Equals(`Object` obj) |  | 
 | `Int32` | GetHashCode() |  | 
 
 
-## `ContainerUploadInfo`
+## `UrlInfoJson`
 
-Contains information for uploading an IContainer to the Absio API server.
+This is a JSON representation of the URL data used to define where an encrypted container is stored in the Absio Broker application's  storage location (out of the box this is on S3).  This has the URL and the expiration time. This is used for upload and download  of the encrypted container.
 ```csharp
-public class Absio.Sdk.Server.Response.ContainerUploadInfo
-    : IEquatable<ContainerUploadInfo>
+public class Absio.Sdk.Server.Response.UrlInfoJson
+    : IEquatable<UrlInfoJson>
 
 ```
 
@@ -36,16 +38,17 @@ Properties
 
 | Type | Name | Summary | 
 | --- | --- | --- | 
-| `Int64` | Length | The length of the encrypted SecuredContainer | 
-| `String` | Type | The categorical type of the container. | 
+| `DateTime` | ExpiresAt | The expiration time of the URL. | 
+| `Boolean` | IsExpired | True if the URL is already expired. | 
+| `String` | Url | The storage location as a URL for the container. | 
 
 
 Methods
 
 | Type | Name | Summary | 
 | --- | --- | --- | 
-| `Boolean` | Equals(`ContainerUploadInfo` other) | Compares this instance with the other instance for equality based on the properties. | 
-| `Boolean` | Equals(`Object` obj) | Compares this instance with the other instance for equality based on the properties. | 
+| `Boolean` | Equals(`UrlInfoJson` other) |  | 
+| `Boolean` | Equals(`Object` obj) |  | 
 | `Int32` | GetHashCode() |  | 
 
 
