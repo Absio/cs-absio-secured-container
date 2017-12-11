@@ -1,80 +1,78 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Absio.Sdk.Container;
 using Absio.Sdk.Providers;
+using IContainer = Absio.Sdk.Container.IContainer;
 
 namespace SelfManagedProvider
 {
-    public class SelfManagedProvider : BaseProvider
+    // TODO - docs on classes and methods
+    public class SelfManagedProvider : ServerCacheOfsProvider
     {
-        public ServerCacheOfsProvider ServerCacheOfsProvider { get; }
-
-        public SelfManagedProvider()
-        {
-            ServerCacheOfsProvider = new ServerCacheOfsProvider();
-        }
-
-        /// <summary>
-        ///     Initialize the Container Provider.
-        /// </summary>
-        public void Initialize(string serverUrl, string apiKey, string applicationName, String ofsRootDirectory = null,
-            bool partitionDataByUser = false)
-        {
-            ServerCacheOfsProvider.Initialize(serverUrl, apiKey, applicationName, ofsRootDirectory,
-                partitionDataByUser);
-        }
-
-        /// <summary>
-        ///     Save the container data so that it is not stored on the server / ofs
-        /// </summary>
-        public async Task<SecuredContainer> CreateAsync(byte[] content, object customHeaderObject = null,
+        public new async Task<SecuredContainer> CreateAsync(byte[] content, object customHeaderObject = null,
             List<ContainerAccessLevel> accessLevels = null, string type = null)
         {
-            var container = ServerCacheOfsProvider.ServerProvider.BuildNewContainer(content, customHeaderObject, accessLevels, type);
-            var securedContainer = await ServerCacheOfsProvider.ContainerEncryptionService.EncryptAsync(container);
+            var container = ServerProvider.BuildNewContainer(content, customHeaderObject, accessLevels, type);
+            var securedContainer = await ContainerEncryptionService.EncryptAsync(container);
 
             var encryptedData = securedContainer.Bytes();
             var newContainer = await SecuredContainer.CreateAsync(null, securedContainer.Metadata);
 
-            await ServerCacheOfsProvider.ServerProvider.SecuredContainerMapper.CreateOrUpdateAsync(newContainer);
-            await ServerCacheOfsProvider.OfsProvider.CreateAsync(newContainer);
+            await ServerProvider.SecuredContainerMapper.CreateOrUpdateAsync(newContainer);
+            await OfsProvider.CreateAsync(newContainer);
 
             return await SecuredContainer.CreateAsync(encryptedData, newContainer.Metadata);
         }
 
-        /// <summary>
-        ///     Delete the container keys & access info from the server and ofs.
-        /// </summary>
-        public async Task DeleteAsync(Guid containerId)
-        {
-            await ServerCacheOfsProvider.DeleteAsync(containerId);
-        }
-
-        /// <summary>
-        ///     Return a container that's as populated as it can be.
-        /// </summary>
         public async Task<IContainer> GetAsync(Guid containerId, byte[] encryptedData)
         {
-            var metadata = await ServerCacheOfsProvider.GetMetadataAsync(containerId);
-            var newContainer = await SecuredContainer.CreateAsync(encryptedData, metadata);
-            return await ServerCacheOfsProvider.ContainerEncryptionService.DecryptAsync(newContainer);
+            var metadata = await GetMetadataAsync(containerId);
+            var newContainer = await base.CreateAsync(encryptedData, metadata);
+            return await ContainerEncryptionService.DecryptAsync(newContainer);
         }
 
-        public async Task LoginAsync(Guid userId, string password = null, string passphrase = null)
+        public new async Task<SecuredContainer> UpdateAsync(Guid containerId, byte[] content = null,
+            object customHeaderObject = null,
+            List<ContainerAccessLevel> accessLevels = null, string type = null)
         {
-            await ServerCacheOfsProvider.LogInAsync(userId, password, passphrase);
+            var container = ServerProvider.BuildNewContainer(content, customHeaderObject, accessLevels, type);
+            var securedContainer = await ContainerEncryptionService.EncryptAsync(container);
+
+            var encryptedData = securedContainer.Bytes();
+            var newContainer = await SecuredContainer.CreateAsync(null, securedContainer.Metadata);
+
+            await ServerProvider.SecuredContainerMapper.CreateOrUpdateAsync(newContainer);
+            await OfsProvider.CreateOrUpdateAsync(newContainer);
+
+            return await SecuredContainer.CreateAsync(encryptedData, newContainer.Metadata);
         }
 
-        public void Logout()
+        public async Task<SecuredContainer> UpdateContentAndHeaderAsync(Guid containerId, byte[] content = null, object customHeaderObject = null)
         {
-            ServerCacheOfsProvider.Logout();
+            var metadata = await GetMetadataAsync(containerId);
+            var container = ServerProvider.BuildNewContainer(content, customHeaderObject, metadata.ContainerAccessLevels, metadata.Type);
+            return await ContainerEncryptionService.EncryptAsync(container);
         }
 
-        public async Task RegisterAsync(string password, string passphrase, string reminder = null)
+        #region Broken ServerCacheOfs Methods - do not use
+
+        public new async Task<IContainer> GetAsync(Guid containerId)
         {
-            await ServerCacheOfsProvider.RegisterAsync(password, passphrase, reminder);
+            throw new AccessViolationException("This method is not supported.");
         }
 
+        public new async Task<SecuredContainer> UpdateContentAsync(Guid containerId, byte[] content = null)
+        {
+            throw new AccessViolationException("This method is not supported.");
+        }
+
+        public new async Task<SecuredContainer> UpdateHeaderAsync(Guid containerId, object customHeaderObject = null)
+        {
+            throw new AccessViolationException("This method is not supported.");
+        }
+
+        #endregion
     }
 }

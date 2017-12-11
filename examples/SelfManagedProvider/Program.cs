@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Absio.Sdk.Container;
+using Absio.Sdk.Exceptions;
 using Absio.Sdk.Providers;
 
 namespace SelfManagedProvider
@@ -28,12 +29,13 @@ namespace SelfManagedProvider
             var selfProvider = new SelfManagedProvider();
             selfProvider.Initialize(ServerUrl, ApiKey, ApplicationName, OfsRoot);
 
-            await selfProvider.LoginAsync(new Guid("083c92bd-607b-447c-9cd4-6a6294e04250"), "Password#1", "Passphrase#1");
+            await selfProvider.LogInAsync(new Guid("083c92bd-607b-447c-9cd4-6a6294e04250"), "Password#1", "Passphrase#1");
 
             //Now you, the app developer, decide where to store the data.  Here's an example:
             var content = "Content";
             string path = @"d:\temp\MyTest.container";
-            var container = await selfProvider.CreateAsync(Encoding.ASCII.GetBytes(content), "Custom Header");
+            var type = "type";
+            var container = await selfProvider.CreateAsync(Encoding.ASCII.GetBytes(content), "Custom Header", null, type);
 
             using (FileStream fs = File.Open(path, FileMode.OpenOrCreate))
             {
@@ -44,6 +46,44 @@ namespace SelfManagedProvider
             var fileBytes = File.ReadAllBytes(path);
             var newContainer = await selfProvider.GetAsync(container.Metadata.Id, fileBytes);
             var content2 = Encoding.ASCII.GetString(newContainer.Content);
+
+            if (content != content2)
+            {
+                throw new ArgumentException("error");
+            }
+
+            if (newContainer.Metadata.Type != type)
+            {
+                throw new ArgumentException("error");
+            }
+
+            var newContent = "new content";
+            var newHeader = "new header";
+            var newType = "new type";
+            var updatedContainer = await selfProvider.UpdateAsync(container.Metadata.Id, Encoding.ASCII.GetBytes(newContent), newHeader, null, newType);
+            var decryptedUpdatedContainer = await selfProvider.GetAsync(container.Metadata.Id, updatedContainer.Bytes());
+            var decryptedUpdatedContent = Encoding.ASCII.GetString(decryptedUpdatedContainer.Content);
+
+            if (newContent != decryptedUpdatedContent)
+            {
+                throw new ArgumentException("error");
+            }
+
+            if (decryptedUpdatedContainer.Metadata.Type != newType)
+            {
+                throw new ArgumentException("error");
+            }
+
+            await selfProvider.DeleteAsync(container.Metadata.Id);
+
+            try
+            {
+                decryptedUpdatedContainer = await selfProvider.GetAsync(container.Metadata.Id, updatedContainer.Bytes());
+                throw new ArgumentException("error");
+            }
+            catch (NotFoundException )
+            {
+            }
         }
     }
 }

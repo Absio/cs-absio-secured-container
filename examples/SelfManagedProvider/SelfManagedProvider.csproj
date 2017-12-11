@@ -34,11 +34,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Absio.BouncyCastle.Standard, Version=1.8.0.0, Culture=neutral, PublicKeyToken=1d4ee9d1b67c81cc, processorArchitecture=MSIL">
-      <HintPath>..\packages\Absio.BouncyCastle.Standard.1.8.0\lib\netstandard1.1\Absio.BouncyCastle.Standard.dll</HintPath>
-    </Reference>
     <Reference Include="AbsioCrypto, Version=1.4.0.0, Culture=neutral, PublicKeyToken=1d4ee9d1b67c81cc, processorArchitecture=MSIL">
-      <HintPath>..\packages\AbsioCrypto.1.4.0-rc-6\lib\netstandard11\AbsioCrypto.dll</HintPath>
+      <HintPath>..\packages\AbsioCrypto.1.4.0\lib\netstandard11\AbsioCrypto.dll</HintPath>
     </Reference>
     <Reference Include="AbsioESQLite.Bindings.Common, Version=1.0.1.0, Culture=neutral, PublicKeyToken=1d4ee9d1b67c81cc, processorArchitecture=MSIL">
       <HintPath>..\packages\AbsioESQLite.1.0.2\lib\net45\AbsioESQLite.Bindings.Common.dll</HintPath>
@@ -52,19 +49,16 @@
     <Reference Include="AbsioSdk, Version=1.2.0.0, Culture=neutral, PublicKeyToken=1d4ee9d1b67c81cc, processorArchitecture=MSIL">
       <HintPath>..\packages\AbsioSdk.1.2.0\lib\netstandard13\AbsioSdk.dll</HintPath>
     </Reference>
-    <Reference Include="Chaos.NaCl.Standard, Version=0.1.0.0, Culture=neutral, PublicKeyToken=1d4ee9d1b67c81cc, processorArchitecture=MSIL">
-      <HintPath>..\packages\Chaos.NaCl.1.0.3\lib\netstandard1.1\Chaos.NaCl.Standard.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.IO.FileSystem, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.IO.FileSystem.4.3.0\lib\net46\System.IO.FileSystem.dll</HintPath>
+    <Reference Include="System.IO.FileSystem, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.FileSystem.4.0.1\lib\net46\System.IO.FileSystem.dll</HintPath>
     </Reference>
-    <Reference Include="System.IO.FileSystem.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.IO.FileSystem.Primitives.4.3.0\lib\net46\System.IO.FileSystem.Primitives.dll</HintPath>
+    <Reference Include="System.IO.FileSystem.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.FileSystem.Primitives.4.0.1\lib\net46\System.IO.FileSystem.Primitives.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http, Version=4.1.1.2, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Net.Http.4.3.3\lib\net46\System.Net.Http.dll</HintPath>
