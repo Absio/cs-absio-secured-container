@@ -144,10 +144,10 @@ Properties
 
 | Type | Name | Summary | 
 | --- | --- | --- | 
-| `String` | Algorithm |  | 
-| `Int32` | Index |  | 
-| `Int32` | KeySize |  | 
-| `Int32` | KeySizeInBits |  | 
+| `String` | Algorithm | The name of the algorithm. | 
+| `Int32` | Index | The index of the algorithm in its respective enumeration. | 
+| `Int32` | KeySize | The size of the key in bytes for the algorithm. | 
+| `Int32` | KeySizeInBits | The size of the key in bits for the algorithm. | 
 
 
 ## `MacAlgorithmType`

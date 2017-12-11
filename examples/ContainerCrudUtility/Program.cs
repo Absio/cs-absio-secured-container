@@ -2,10 +2,11 @@
 using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Absio.Sdk.Container;
 using Absio.Sdk.Events;
 using Absio.Sdk.Exceptions;
-using Absio.Sdk.Session;
+using Absio.Sdk.Providers;
 using Colorful;
 using CommandLine;
 using Common;
@@ -17,13 +18,10 @@ using Console = Colorful.Console;
 
 namespace ContainerCrudUtility
 {
-    internal class Program
+    internal class Program : BaseProgram
     {
         #region Static Fields and Constants
 
-        private static SecuredContainerSession _session;
-        private static SessionAttributes _sessionAttributes;
-        private static Guid _userId;
         public const string ApplicationName = "cs-cli-crud-app";
 
         #endregion
@@ -43,13 +41,18 @@ namespace ContainerCrudUtility
                 return;
             }
 
-            _sessionAttributes = new SessionAttributes(parsed.ApiKey, parsed.Url,
-                Path.Combine(Directory.GetCurrentDirectory(), "data"), false,
-                ApplicationName);
-            _session = new SecuredContainerSession(_sessionAttributes);
+            _apiKey = parsed.ApiKey;
+            _serverUrl = parsed.Url;
+            if (!SetProviderType(parsed.Provider))
+            {
+                ShowMessageAndWaitForKeyPress("Invalid Provider Type.  Must be Ofs, Server or ServerCacheOfs.");
+                return;
+            }
+            _baseDir = Path.Combine(Directory.GetCurrentDirectory(), "data");
+            InitializeProvider(ApplicationName);
 
             //Start prompt with completions
-            ShowLoggedOutPrompt(_sessionAttributes);
+            ShowLoggedOutPrompt();
         }
 
         private static void ShowLoggedInPrompt()
@@ -58,13 +61,7 @@ namespace ContainerCrudUtility
 
             // Show startup message
             var startupMsg = new Figlet().ToAscii("Absio").ConcreteValue;
-            startupMsg += "\n";
-            startupMsg += "Api Key : " + _sessionAttributes.ApiKey;
-            startupMsg += "\n";
-            startupMsg += "Host : " + _sessionAttributes.ServerUrl;
-            startupMsg += "\n";
-            startupMsg += "User : " + _userId;
-            startupMsg += "\n";
+            startupMsg += SessionInfo;
 
             var eval = new LoggedInCommandEvaluator();
 
@@ -75,19 +72,25 @@ namespace ContainerCrudUtility
                 startupMsg, LoggedInCommandEvaluator.Commands);
         }
 
-        private static void ShowLoggedOutPrompt(SessionAttributes sessionAttributes)
+        private static string AbsioConsoleHeader
+        {
+            get
+            {
+                var absioConsoleHeader = new Figlet().ToAscii("Absio").ConcreteValue;
+                absioConsoleHeader += "\n\n";
+                absioConsoleHeader += "Container CRUD Utility";
+                absioConsoleHeader += "\n\n";
+                return absioConsoleHeader;
+            }
+        }
+
+        private static void ShowLoggedOutPrompt()
         {
             Console.Clear();
 
             // Show startup message
-            var startupMsg = new Figlet().ToAscii("Absio").ConcreteValue;
-            startupMsg += "\n\n";
-            startupMsg += "Container CRUD Utility";
-            startupMsg += "\n\n";
-            startupMsg += "Api Key : " + sessionAttributes.ApiKey;
-            startupMsg += "\n";
-            startupMsg += "Host : " + sessionAttributes.ServerUrl;
-            startupMsg += "\n";
+            var startupMsg = AbsioConsoleHeader;
+            startupMsg += SessionInfo;
 
             var eval = new LoggedOutCommandEvaluator();
 
@@ -114,6 +117,7 @@ namespace ContainerCrudUtility
             public static readonly List<string> Commands = new List<string>
             {
                 "logout",
+                "changeprovider",
                 "create",
                 "read",
                 "update",
@@ -129,10 +133,11 @@ namespace ContainerCrudUtility
             {
                 Parser.Default
                     .ParseArguments<LogoutOptions, CreateOptions, ReadOptions, UpdateOptions,
-                        DeleteOptions, ListEventsOptions>(command.Split())
+                        DeleteOptions, ListEventsOptions, ChangeProviderOptions>(command.Split())
                     .MapResult(
                         (LogoutOptions opts) => RunLogOutCommand(),
                         (CreateOptions opts) => RunCreateCommand(opts),
+                        (ChangeProviderOptions opts) => RunChangeProviderCommand(opts),
                         (ReadOptions opts) => RunReadCommand(opts),
                         (UpdateOptions opts) => RunUpdateCommand(opts),
                         (DeleteOptions opts) => RunDeleteCommand(opts),
@@ -173,7 +178,7 @@ namespace ContainerCrudUtility
                 Console.WriteLine($"Container ID : {container.Id.ToString()}");
                 Console.WriteLine($"Type : {container.Metadata.Type}");
                 Console.WriteLine($"Size : {container.Metadata.Length} bytes");
-                Console.WriteLine($"Header : {container.ContainerHeader?.CustomHeader}");
+                Console.WriteLine($"Header : {container.ContainerHeader?.Data}");
                 string content = null;
                 if (container.Content != null)
                 {
@@ -218,24 +223,58 @@ namespace ContainerCrudUtility
                 }
             }
 
-            private static void ResetSession()
+            private string RunChangeProviderCommand(ChangeProviderOptions opts)
             {
-                _session.Logout();
-                _session = new SecuredContainerSession(_sessionAttributes);
+                var providerType = opts.Provider;
+
+                if (!SetProviderType(providerType))
+                {
+                    var error = "Invalid Provider Type.  Must be Ofs, Server or ServerCacheOfs.";
+                    Console.WriteLine(error);
+                    return error;
+                }
+
+                // Get the KeyRing...
+                var keyRing = _provider.KeyRing;
+
+                // reset the provider
+                ResetSession(ApplicationName);
+
+                // Authenticate with the KeyRing.
+                _provider.LogInAsync(keyRing);
+
+                return string.Empty;
             }
 
             private string RunCreateCommand(CreateOptions options)
             {
-                var file = options.File;
-
                 byte[] content;
-                using (var fileStream = File.OpenRead(file))
+                if (options.File != null) 
                 {
-                    using (var memoryStream = new MemoryStream())
+                    using (var fileStream = File.OpenRead(options.File))
                     {
-                        fileStream.CopyTo(memoryStream);
-                        content = memoryStream.ToArray();
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            fileStream.CopyTo(memoryStream);
+                            content = memoryStream.ToArray();
+                        }
                     }
+                    
+                }
+                else if (options.Data != null)
+                {
+                    content = Encoding.ASCII.GetBytes(options.Data);
+                }
+                else
+                {
+                    content = null;
+                }
+
+                if (content == null)
+                {
+                    var error = "You must specify a file or data for the content.";
+                    Console.WriteLine(error);
+                    return error;
                 }
 
                 var type = options.Type;
@@ -272,11 +311,11 @@ namespace ContainerCrudUtility
                     }
                 }
 
-                var containerId = _session.CreateAsync(content, header, access, type).Result;
+                var securedContainer = _provider.CreateAsync(content, header, access, type).Result;
 
-                Console.WriteLine($"Successfully created container : {containerId}");
+                Console.WriteLine($"Successfully created container : {securedContainer.Metadata.Id}");
                 Console.WriteLine();
-                PrintContainerToConsole(_session.ReadAsync(containerId).Result);
+                PrintContainerToConsole(_provider.GetAsync(securedContainer.Metadata.Id).Result);
 
                 return string.Empty;
             }
@@ -292,7 +331,7 @@ namespace ContainerCrudUtility
                 {
                     try
                     {
-                        _session.DeleteAsync(new Guid(options.Id)).Wait();
+                        _provider.DeleteAsync(new Guid(options.Id)).Wait();
                         ShowMessageAndWaitForKeyPress("Container has been deleted.");
                     }
                     catch (AggregateException e)
@@ -333,8 +372,8 @@ namespace ContainerCrudUtility
                         containerId = Guid.Parse(options.ContainerId);
                     }
 
-                    var events = _session.GetEventsAsync(action, options.StartingId, options.EndingId,
-                        containerId, options.ContainerType).Result;
+                    var events = GetEventsFromProvider(action, options.StartingId, options.EndingId,
+                        containerId, options.ContainerType);
                     PrintEventsToConsole(events);
                 }
                 catch (AggregateException e)
@@ -351,11 +390,11 @@ namespace ContainerCrudUtility
 
             private string RunLogOutCommand()
             {
-                ResetSession();
+                ResetSession(ApplicationName);
 
                 ShowMessageAndWaitForKeyPress("User logged out.");
 
-                ShowLoggedOutPrompt(_sessionAttributes);
+                ShowLoggedOutPrompt();
                 return string.Empty;
             }
 
@@ -363,7 +402,7 @@ namespace ContainerCrudUtility
             {
                 try
                 {
-                    var container = _session.ReadAsync(options.Id).Result;
+                    var container = _provider.GetAsync(options.Id).Result;
                     PrintContainerToConsole(container);
 
                     if (!string.IsNullOrEmpty(options.File))
@@ -442,7 +481,7 @@ namespace ContainerCrudUtility
                 var containerId = options.Id;
                 try
                 {
-                    _session.UpdateAsync(containerId, content, header, access, type).Wait();
+                    _provider.UpdateAsync(containerId, content, header, access, type).Wait();
                 }
                 catch (AggregateException e)
                 {
@@ -464,7 +503,7 @@ namespace ContainerCrudUtility
 
                 Console.WriteLine($"Successfully updated container : {containerId.ToString()}");
                 Console.WriteLine();
-                PrintContainerToConsole(_session.ReadAsync(containerId).Result);
+                PrintContainerToConsole(_provider.GetAsync(containerId).Result);
 
                 return string.Empty;
             }
@@ -478,8 +517,11 @@ namespace ContainerCrudUtility
             {
                 #region Properties, Indexers
 
-                [Option("file", Required = true)]
+                [Option("file", Required = false)]
                 public string File { get; set; }
+
+                [Option("data", Required = false)]
+                public string Data { get; set; }
 
                 [Option("type", Required = false)]
                 public string Type { get; set; }
@@ -571,7 +613,7 @@ namespace ContainerCrudUtility
             #region Static Fields and Constants
 
             public static readonly List<string> Commands =
-                new List<string> {"register", "login", "getreminder", "resetpassword"};
+                new List<string> {"register", "login", "getreminder", "resetpassword", "changeprovider" };
 
             #endregion
 
@@ -580,12 +622,13 @@ namespace ContainerCrudUtility
             public string HandleCommand(string command)
             {
                 Parser.Default
-                    .ParseArguments<RegisterOptions, LoginOptions, GetReminderOptions>(
+                    .ParseArguments<RegisterOptions, LoginOptions, GetReminderOptions, ChangeProviderOptions>(
                         command.Split())
                     .MapResult(
                         (RegisterOptions opts) => RunRegisterCommand(opts),
                         (LoginOptions opts) => RunLoginCommand(opts),
                         (GetReminderOptions opts) => RunGetReminderCommand(opts),
+                        (ChangeProviderOptions opts) => RunChangeProviderCommand(opts),
                         errs => HandleErrors());
 
                 return "";
@@ -607,7 +650,7 @@ namespace ContainerCrudUtility
                 try
                 {
                     var userId = new Guid(opts.UserId);
-                    reminder = _session.GetBackupReminderAsync(userId).Result;
+                    reminder = GetReminderFromProvider(userId);
 
                     Console.WriteLine("Reminder : " + reminder);
                 }
@@ -628,7 +671,7 @@ namespace ContainerCrudUtility
                 try
                 {
                     var userId = new Guid(opts.UserId);
-                    _session.LogInAsync(userId, opts.Password, opts.Passphrase).Wait();
+                    _provider.LogInAsync(userId, opts.Password, opts.Passphrase).Wait();
                     _userId = userId;
                     ShowLoggedInPrompt();
                 }
@@ -648,7 +691,7 @@ namespace ContainerCrudUtility
             {
                 try
                 {
-                    _userId = _session.RegisterAsync(opts.Password, opts.Passphrase, opts.Reminder).Result;
+                    _userId = RegisterWithProvider(opts.Password, opts.Passphrase, opts.Reminder);
                     ShowLoggedInPrompt();
                 }
                 catch (AggregateException e)
@@ -661,6 +704,23 @@ namespace ContainerCrudUtility
                 }
 
                 return "";
+            }
+
+            private string RunChangeProviderCommand(ChangeProviderOptions opts)
+            {
+                var providerType = opts.Provider;
+
+                if (!SetProviderType(providerType))
+                {
+                    var error = "Invalid Provider Type.  Must be Ofs, Server or ServerCacheOfs.";
+                    Console.WriteLine(error);
+                    return error;
+                }
+
+                // reset the provider
+                ResetSession(ApplicationName);
+
+                return string.Empty;
             }
 
             #endregion
@@ -715,15 +775,13 @@ namespace ContainerCrudUtility
             #endregion
         }
 
-        public class ProgramOptions
+        [Verb("changeprovider", HelpText = "Changes the provider.  Must be: Ofs, Server or ServerCacheOfs.")]
+        public class ChangeProviderOptions
         {
             #region Properties, Indexers
 
             [Option(Required = true)]
-            public string ApiKey { get; set; }
-
-            [Option(Required = true)]
-            public string Url { get; set; }
+            public string Provider { get; set; }
 
             #endregion
         }
