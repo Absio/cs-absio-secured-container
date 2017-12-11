@@ -48,8 +48,8 @@
     <Reference Include="AbsioESQLite.Core, Version=1.0.1.0, Culture=neutral, PublicKeyToken=1d4ee9d1b67c81cc, processorArchitecture=MSIL">
       <HintPath>..\packages\AbsioESQLite.1.0.2\lib\net45\AbsioESQLite.Core.dll</HintPath>
     </Reference>
-    <Reference Include="AbsioSdk, Version=1.2.0.0, Culture=neutral, PublicKeyToken=1d4ee9d1b67c81cc, processorArchitecture=MSIL">
-      <HintPath>..\packages\AbsioSdk.1.2.0\lib\netstandard13\AbsioSdk.dll</HintPath>
+    <Reference Include="AbsioSdk, Version=1.2.1.0, Culture=neutral, PublicKeyToken=1d4ee9d1b67c81cc, processorArchitecture=MSIL">
+      <HintPath>..\packages\AbsioSdk.1.2.1\lib\netstandard13\AbsioSdk.dll</HintPath>
     </Reference>
     <Reference Include="Colorful.Console, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Colorful.Console.1.1.2\lib\net461\Colorful.Console.dll</HintPath>
