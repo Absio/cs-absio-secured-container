@@ -1,6 +1,6 @@
 ## `AbsioCodedException`
 
-Base class from which all Absio exceptions should inherit
+Base class from which all Absio exceptions should inherit.
 ```csharp
 public class Absio.Sdk.Exceptions.AbsioCodedException
     : Exception, ISerializable, _Exception
@@ -11,7 +11,7 @@ Properties
 
 | Type | Name | Summary | 
 | --- | --- | --- | 
-| `String` | ErrorGuid | The guid of the error returned by the server | 
+| `String` | ErrorGuid | The guid of the error returned by the server. | 
 
 
 ## `AllSigningKeysInactiveException`
@@ -34,7 +34,7 @@ public class Absio.Sdk.Exceptions.AlreadyExistsException
 
 ## `ApiKeyDisabledException`
 
-Specialized exception class to be used when the IDO was not found on the server.
+Specialized exception class to be used when the container was not found on the server.
 ```csharp
 public class Absio.Sdk.Exceptions.ApiKeyDisabledException
     : AbsioCodedException, ISerializable, _Exception
@@ -43,7 +43,7 @@ public class Absio.Sdk.Exceptions.ApiKeyDisabledException
 
 ## `AuthenticationException`
 
-Thrown when attempting to call a method call on ActiveSession without local authentication.
+Thrown when attempting to call a method call without local authentication.
 ```csharp
 public class Absio.Sdk.Exceptions.AuthenticationException
     : AbsioCodedException, ISerializable, _Exception
@@ -52,18 +52,10 @@ public class Absio.Sdk.Exceptions.AuthenticationException
 
 ## `ContainerDigestValidationException`
 
-Thrown when the IDO digest validation fails
+Thrown when the container digest validation fails
 ```csharp
 public class Absio.Sdk.Exceptions.ContainerDigestValidationException
     : AbsioCodedException, ISerializable, _Exception
-
-```
-
-## `ContainerProviderInitializationException`
-
-```csharp
-public class Absio.Sdk.Exceptions.ContainerProviderInitializationException
-    : Exception, ISerializable, _Exception
 
 ```
 
@@ -91,14 +83,6 @@ Thrown when Download Container permission isn't set but content is requested.
 ```csharp
 public class Absio.Sdk.Exceptions.DownloadPermissionException
     : Exception, ISerializable, _Exception
-
-```
-
-## `EventProcessingException`
-
-```csharp
-public class Absio.Sdk.Exceptions.EventProcessingException
-    : AbsioCodedException, ISerializable, _Exception
 
 ```
 
@@ -153,6 +137,14 @@ public class Absio.Sdk.Exceptions.KeyFileDoesNotExistLocallyException
 
 ```
 
+## `KeyFileRescueException`
+
+```csharp
+public class Absio.Sdk.Exceptions.KeyFileRescueException
+    : Exception, ISerializable, _Exception
+
+```
+
 ## `KeyFileUsedException`
 
 Specialized exception class to be used when the number of uses of a key file would be exceeded
@@ -173,7 +165,7 @@ public class Absio.Sdk.Exceptions.LicenseKeyExceededException
 
 ## `NotFoundException`
 
-Specialized exception class to be used when the IDO was not found on the server.
+Specialized exception class to be used when the container was not found on the Absio Broker application.
 ```csharp
 public class Absio.Sdk.Exceptions.NotFoundException
     : AbsioCodedException, ISerializable, _Exception
@@ -182,6 +174,7 @@ public class Absio.Sdk.Exceptions.NotFoundException
 
 ## `NotFoundLocallyException`
 
+Specialized exception class to be used when the container was not found in the OFS.
 ```csharp
 public class Absio.Sdk.Exceptions.NotFoundLocallyException
     : AbsioCodedException, ISerializable, _Exception
@@ -190,7 +183,7 @@ public class Absio.Sdk.Exceptions.NotFoundLocallyException
 
 ## `OfsFileCreationException`
 
-Thrown when attempting to call a method call on ActiveSession without local authentication.
+This exception is thrown if Ofs fails to find a clean file location on the GetNewHashedFileAsync call.
 ```csharp
 public class Absio.Sdk.Exceptions.OfsFileCreationException
     : AbsioCodedException, ISerializable, _Exception
@@ -227,6 +220,7 @@ Static Fields
 | `String` | LoginKeyFileDecryptionWithNewerOnServerCode |  | 
 | `String` | LoginKeyFileDoesNotExistLocallyCode |  | 
 | `String` | LoginKeyFileUsedCode |  | 
+| `String` | LoginUserNotFoundCode |  | 
 | `String` | NotAbsioCoreAuthenticatedCode |  | 
 | `String` | NotAbsioServerAuthenticatedCode |  | 
 | `String` | OfsFileCreationCode |  | 
@@ -235,7 +229,7 @@ Static Fields
 | `String` | RescueKeyFileDecryptionCode |  | 
 | `String` | ServerAuthKeyFileInvalidCode |  | 
 | `String` | ServerConnectionCode |  | 
-| `String` | Unknown |  | 
+| `String` | UnknownErrorCode |  | 
 | `String` | ValidatePasswordKeyFileDecryptionCode |  | 
 
 
@@ -274,6 +268,7 @@ Static Fields
 | `String` | LoginKeyFileDecryptionWithNewerOnServerMessage |  | 
 | `String` | LoginKeyFileDoesNotExistLocallyMessage |  | 
 | `String` | LoginKeyFileUsedMessage |  | 
+| `String` | LoginUserNotFoundMessage |  | 
 | `String` | NotAbsioCoreAuthenticationMessage |  | 
 | `String` | NotAbsioServerAuthenticationMessage |  | 
 | `String` | OfsFileCreationMessage |  | 
@@ -281,13 +276,13 @@ Static Fields
 | `String` | RescueKeyFileDecryptionMessage |  | 
 | `String` | ServerAuthKeyFileInvalidMessage |  | 
 | `String` | ServerConnectionMessage |  | 
-| `String` | Unknown |  | 
+| `String` | UnknownErrorMessage |  | 
 | `String` | ValidatePasswordKeyFileDecryptionMessage |  | 
 
 
 ## `ServerConnectionException`
 
-Specialized exception class to be used when there is a problem connecting to the server
+Specialized exception class to be used when there is a problem connecting to the Absio Broker application
 ```csharp
 public class Absio.Sdk.Exceptions.ServerConnectionException
     : AbsioCodedException, ISerializable, _Exception
@@ -296,7 +291,7 @@ public class Absio.Sdk.Exceptions.ServerConnectionException
 
 ## `ServerErrorException`
 
-Thrown when the server rejects an API call.
+Thrown when the Absio Broker application rejects an API call.
 ```csharp
 public class Absio.Sdk.Exceptions.ServerErrorException
     : Exception, ISerializable, _Exception

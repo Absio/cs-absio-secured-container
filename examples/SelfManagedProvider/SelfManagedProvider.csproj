@@ -1,18 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E359D17D-9E3B-4746-AFF0-B2D64A0E31D2}</ProjectGuid>
+    <ProjectGuid>{169C4787-21B4-4AAD-BCB1-0DBA2E825284}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UserManagementUtility</RootNamespace>
-    <AssemblyName>UserManagementUtility</AssemblyName>
+    <RootNamespace>SelfManagedProvider</RootNamespace>
+    <AssemblyName>SelfManagedProvider</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
@@ -51,20 +49,11 @@
     <Reference Include="AbsioSdk, Version=1.2.0.0, Culture=neutral, PublicKeyToken=1d4ee9d1b67c81cc, processorArchitecture=MSIL">
       <HintPath>..\packages\AbsioSdk.1.2.0\lib\netstandard13\AbsioSdk.dll</HintPath>
     </Reference>
-    <Reference Include="Colorful.Console, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Colorful.Console.1.1.2\lib\net461\Colorful.Console.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CommandLine, Version=2.0.275.0, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommandLineParser.2.1.1-beta\lib\net45\CommandLine.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.IO.FileSystem, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.IO.FileSystem.4.0.1\lib\net46\System.IO.FileSystem.dll</HintPath>
     </Reference>
@@ -95,24 +84,13 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SelfManagedProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj">
-      <Project>{ea6cee51-6988-4525-bd0b-88b5c7ee58f0}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>mkdir "$(TargetDir)x86"
-mkdir "$(TargetDir)x64"
-xcopy "$(SolutionDir)packages\AbsioESqlite.1.0.2\build\net45\x86\*.*" "$(TargetDir)x86" /Y
-xcopy "$(SolutionDir)packages\AbsioESqlite.1.0.2\build\net45\x64\*.*" "$(TargetDir)x64" /Y</PreBuildEvent>
-  </PropertyGroup>
   <Import Project="..\packages\AbsioESQLite.1.0.2\build\net45\AbsioESQLite.targets" Condition="Exists('..\packages\AbsioESQLite.1.0.2\build\net45\AbsioESQLite.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -120,11 +98,4 @@ xcopy "$(SolutionDir)packages\AbsioESqlite.1.0.2\build\net45\x64\*.*" "$(TargetD
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\AbsioESQLite.1.0.2\build\net45\AbsioESQLite.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\AbsioESQLite.1.0.2\build\net45\AbsioESQLite.targets'))" />
   </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
