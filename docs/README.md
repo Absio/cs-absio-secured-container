@@ -9,6 +9,7 @@
 ## [Absio.Sdk.Container](Absio.Sdk.Container.md)
 
 - [`AccessNotification`](Absio.Sdk.Container.md#accessnotification)
+- [`Container`](Absio.Sdk.Container.md#container)
 - [`ContainerAccessLevel`](Absio.Sdk.Container.md#containeraccesslevel)
 - [`ContainerHeader`](Absio.Sdk.Container.md#containerheader)
 - [`ContainerMetadata`](Absio.Sdk.Container.md#containermetadata)

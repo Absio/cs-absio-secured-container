@@ -25,6 +25,37 @@ Methods
 | `Int32` | GetHashCode() |  | 
 
 
+## `Container`
+
+This is the decrypted version of a SecuredContainer.  It has the content, header and metadata.  The content and header are not encrypted.
+```csharp
+public class Absio.Sdk.Container.Container
+    : IEquatable<Container>, IContainer
+
+```
+
+Properties
+
+| Type | Name | Summary | 
+| --- | --- | --- | 
+| `ContainerHeader` | ContainerHeader | The decrypted custom header of the container | 
+| `Byte[]` | Content | The decrypted content of the container. | 
+| `Guid` | Id | The ID of the Container. | 
+| `ContainerMetadata` | Metadata | The metadata of the container. | 
+| `Nullable<DateTime>` | SyncedAt | The DateTime the container was last synchronized with the server.  Null if it hasn't been synced with the server. | 
+
+
+Methods
+
+| Type | Name | Summary | 
+| --- | --- | --- | 
+| `Boolean` | Equals(`Container` other) | Check for equality with the container. | 
+| `Boolean` | Equals(`Object` obj) | Check for equality with the container. | 
+| `Int32` | GetHashCode() | The unique hash code for this object. | 
+| `T` | GetHeaderAs() |  | 
+| `void` | SetHeader(`Object` customHeaderObject, `Int32` version = 1) | Sets the custom header to the given serializable object | 
+
+
 ## `ContainerAccessLevel`
 
 Describes a User's access to a Container.  This class is used by the Container create and update methods on Providers.  In addition, the SecuredContainer Mappers  also use it.  It is used to define the access of user to a SecuredContainer.  When creating a new ContainerAccessLevel, a user can define an optional  expiration, as well as specific permissions.  ContainerMetadata that is associated with both SecuredContainers and  IContainers (the decrypted representation of a SecuredContainer) has the associated access for all users lists.  Thus, any GetXXXAsync call that includes metadata will have the access of all users for the container in question.
@@ -174,7 +205,7 @@ Enum
 
 ## `SecuredContainer`
 
-This contains the Absio format of the encrypted content and header, its length and corresponding metadata.  This is the encrypted version of a IContainer.
+This contains the Absio format of the encrypted content and header, its length and corresponding metadata.  This is the encrypted version of a Container/IContainer.
 ```csharp
 public class Absio.Sdk.Container.SecuredContainer
     : IEquatable<SecuredContainer>
