@@ -155,7 +155,7 @@ Methods
 | Type | Name | Summary | 
 | --- | --- | --- | 
 | `Task<Byte[]>` | ChangeCredentialsAsync(`String` password, `String` passphrase, `String` passphraseReminder = null) | This will change the credentials using the ServerProvider.  The resultant KeyFile bytes will be used to update the  KeyFile in the Ofs using the OfsProviders OfsKeyFileMapper. | 
-| `Task<SecuredContainer>` | CreateAsync(`Byte[]` content, `Object` customHeaderObject = null, `List<ContainerAccessLevel>` accessLevels = null, `String` type = null) | Creates a new container and returns its ID. | 
+| `Task<SecuredContainer>` | CreateAsync(`Byte[]` content, `Object` customHeaderObject = null, `List<ContainerAccessLevel>` accessLevels = null, `String` type = null) | Creates and persists a new SecuredContainer on the Absio Broker application, caches it in the OFS and returns it.  Use the returned value to learn the assigned ID. | 
 | `Task` | DeleteAsync(`Guid` containerId) | Deletes the container with the given ID from the Absio Broker application and the OFS by calling DeleteAsync on the  ServerProvider and the OfsProvider. | 
 | `Task` | DeleteUserAsync() | Deletes all associated data for the authenticated user.  Calls DeleteUserAsync on the ServerProvider and  the OfsProvider.  NOTE: This cannot be undone.  Ensure you really want to perform this operation before doing so.  All data related to the user will be removed from the Absio Broker application. | 
 | `Task<IContainer>` | GetAsync(`Guid` containerId) | If the ForceLoadFromServer property is false this gets the Container from the OFS.  If the ForceLoadFromServer  is true or the OFS does not have the container, it is pulled from the server, cached in the OFS and returned  to the user. | 

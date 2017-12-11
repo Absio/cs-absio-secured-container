@@ -85,16 +85,19 @@ namespace SelfManagedProvider
             object customHeaderObject = null,
             List<ContainerAccessLevel> accessLevels = null, string type = null)
         {
-            var container = ServerProvider.BuildNewContainer(content, customHeaderObject, accessLevels, type);
+            var metadata = await GetMetadataAsync(containerId);
+            if (accessLevels == null || accessLevels.Count == 0)
+            {
+                accessLevels = new List<ContainerAccessLevel>();
+                accessLevels.Add(new ContainerAccessLevel((Guid)UserId, ContainerAccessLevel.DefaultOwnerPermissions));
+            }
+            metadata.ContainerAccessLevels = accessLevels;
+            metadata.Type = type;
+            var container = new Container(metadata, content, customHeaderObject);
             var securedContainer = await ContainerEncryptionService.EncryptAsync(container);
 
             var encryptedData = securedContainer.Bytes();
-            var wrongIdMetadata = securedContainer.Metadata;
-            var metadata = new ContainerMetadata(containerId, wrongIdMetadata.CreatedAt, wrongIdMetadata.CreatedBy, wrongIdMetadata.Length, wrongIdMetadata.ModifiedAt, wrongIdMetadata.ModifiedBy, wrongIdMetadata.Type);
-            metadata.ContainerAccessLevels = wrongIdMetadata.ContainerAccessLevels;
-            var newContainer = await SecuredContainer.CreateAsync(null, metadata);
-
-
+            var newContainer = await SecuredContainer.CreateAsync(null, container.Metadata);
             await ServerProvider.SecuredContainerMapper.CreateOrUpdateAsync(newContainer);
             await OfsProvider.CreateOrUpdateAsync(newContainer);
 
