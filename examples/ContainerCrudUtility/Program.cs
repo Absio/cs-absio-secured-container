@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using Absio.Sdk.Container;
@@ -173,7 +174,7 @@ namespace ContainerCrudUtility
                 return string.Empty;
             }
 
-            private void PrintContainerToConsole(IContainer container)
+            private void PrintContainerToConsole(IContainer container, bool open=false)
             {
                 Console.WriteLine($"Container ID : {container.Id.ToString()}");
                 Console.WriteLine($"Type : {container.Metadata.Type}");
@@ -182,7 +183,14 @@ namespace ContainerCrudUtility
                 string content = null;
                 if (container.Content != null)
                 {
-                    content = System.Text.Encoding.Default.GetString(container.Content);
+                    if (container.Metadata.Type != "File" || container.Content.Length < 100000)
+                    {
+                        content = Encoding.Default.GetString(container.Content);
+                    }
+                    else
+                    {
+                        content = "Too big of a file: " + container.ContainerHeader?.Data;
+                    }
                 }
                 Console.WriteLine($"Content : {content}");
                 if (container.Metadata.CreatedAt != null)
@@ -210,6 +218,31 @@ namespace ContainerCrudUtility
                         Console.WriteLine();
                     }
                 }
+
+                // Check to see if we should have the OS open the file.
+                if (open && "File".Equals(container.Metadata.Type) && container.ContainerHeader?.Data != null)
+                {
+                    var fileName = container.ContainerHeader.Data;
+                    var file = Path.GetTempPath() + fileName;
+                    // Write it...
+                    using (var stream = File.OpenWrite(file))
+                    {
+                        stream.WriteAsync(container.Content, 0, container.Content.Length).Wait();
+                    }
+
+                    // Open it...
+                    try
+                    {
+                        Process.Start(file);
+
+                    }
+                    catch (Exception e)
+                    {
+                        System.Console.WriteLine(e);
+                    }
+                }
+
+                Console.WriteLine($"End print for Container ID : {container.Id.ToString()}");
             }
 
             private void PrintEventsToConsole(List<ContainerEvent> events)
@@ -249,8 +282,12 @@ namespace ContainerCrudUtility
             private string RunCreateCommand(CreateOptions options)
             {
                 byte[] content;
-                if (options.File != null) 
+                string header = null;
+                string type = null;
+                if (options.File != null)
                 {
+                    type = "File";
+                    header = Path.GetFileName(options.File);
                     using (var fileStream = File.OpenRead(options.File))
                     {
                         using (var memoryStream = new MemoryStream())
@@ -277,9 +314,16 @@ namespace ContainerCrudUtility
                     return error;
                 }
 
-                var type = options.Type;
-                var header = options.Header;
-
+                if (type == null)
+                {
+                    type = options.Type;
+                    
+                }
+                if (header == null)
+                {
+                    header = options.Header;
+                    
+                }
                 Console.WriteLine("Would you like to grant access to other users? Yes/No");
                 var response = Console.ReadLine();
 
@@ -403,7 +447,7 @@ namespace ContainerCrudUtility
                 try
                 {
                     var container = _provider.GetAsync(options.Id).Result;
-                    PrintContainerToConsole(container);
+                    PrintContainerToConsole(container, true);
 
                     if (!string.IsNullOrEmpty(options.File))
                     {
