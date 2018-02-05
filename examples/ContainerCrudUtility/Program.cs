@@ -179,7 +179,7 @@ namespace ContainerCrudUtility
                 Console.WriteLine($"Container ID : {container.Id.ToString()}");
                 Console.WriteLine($"Type : {container.Metadata.Type}");
                 Console.WriteLine($"Size : {container.Metadata.Length} bytes");
-                Console.WriteLine($"Header : {container.ContainerHeader?.Data}");
+                Console.WriteLine($"Header : {container.ContainerHeader?.CustomData}");
                 string content = null;
                 if (container.Content != null)
                 {
@@ -189,7 +189,7 @@ namespace ContainerCrudUtility
                     }
                     else
                     {
-                        content = "Too big of a file: " + container.ContainerHeader?.Data;
+                        content = "Too big of a file: " + container.ContainerHeader?.CustomData;
                     }
                 }
                 Console.WriteLine($"Content : {content}");
@@ -220,9 +220,9 @@ namespace ContainerCrudUtility
                 }
 
                 // Check to see if we should have the OS open the file.
-                if (open && "File".Equals(container.Metadata.Type) && container.ContainerHeader?.Data != null)
+                if (open && "File".Equals(container.Metadata.Type) && container.ContainerHeader?.CustomData != null)
                 {
-                    var fileName = container.ContainerHeader.Data;
+                    var fileName = container.ContainerHeader.CustomData;
                     var file = Path.GetTempPath() + fileName;
                     // Write it...
                     using (var stream = File.OpenWrite(file))

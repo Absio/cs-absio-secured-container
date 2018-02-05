@@ -39,8 +39,8 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AbsioCrypto, Version=1.4.0.0, Culture=neutral, PublicKeyToken=1d4ee9d1b67c81cc, processorArchitecture=MSIL">
-      <HintPath>..\packages\AbsioCrypto.1.4.0\lib\netstandard11\AbsioCrypto.dll</HintPath>
+    <Reference Include="AbsioCrypto, Version=2.0.0.0, Culture=neutral, PublicKeyToken=1d4ee9d1b67c81cc, processorArchitecture=MSIL">
+      <HintPath>..\packages\AbsioCrypto.2.0.0-rc-12\lib\netstandard20\AbsioCrypto.dll</HintPath>
     </Reference>
     <Reference Include="AbsioESQLite.Bindings.Common, Version=1.0.1.0, Culture=neutral, PublicKeyToken=1d4ee9d1b67c81cc, processorArchitecture=MSIL">
       <HintPath>..\packages\AbsioESQLite.1.0.2\lib\net45\AbsioESQLite.Bindings.Common.dll</HintPath>
@@ -51,8 +51,8 @@
     <Reference Include="AbsioESQLite.Core, Version=1.0.1.0, Culture=neutral, PublicKeyToken=1d4ee9d1b67c81cc, processorArchitecture=MSIL">
       <HintPath>..\packages\AbsioESQLite.1.0.2\lib\net45\AbsioESQLite.Core.dll</HintPath>
     </Reference>
-    <Reference Include="AbsioSdk, Version=1.2.2.0, Culture=neutral, PublicKeyToken=1d4ee9d1b67c81cc, processorArchitecture=MSIL">
-      <HintPath>..\packages\AbsioSdk.1.2.2\lib\netstandard13\AbsioSdk.dll</HintPath>
+    <Reference Include="AbsioSdk, Version=2.0.0.0, Culture=neutral, PublicKeyToken=1d4ee9d1b67c81cc, processorArchitecture=MSIL">
+      <HintPath>..\packages\AbsioSdk.2.0.0-rc-30\lib\netstandard20\AbsioSdk.dll</HintPath>
     </Reference>
     <Reference Include="Colorful.Console, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Colorful.Console.1.1.2\lib\net461\Colorful.Console.dll</HintPath>
@@ -61,6 +61,9 @@
     <Reference Include="CommandLine, Version=2.0.275.0, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
       <HintPath>..\packages\CommandLineParser.2.1.1-beta\lib\net45\CommandLine.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="ManagedOpenSsl, Version=0.7.1.0, Culture=neutral, PublicKeyToken=ec84b54d9a717629, processorArchitecture=x86">
+      <HintPath>..\packages\openssl-net.0.7.1\lib\net20\ManagedOpenSsl.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
