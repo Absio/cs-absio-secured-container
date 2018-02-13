@@ -11,6 +11,7 @@ using Absio.Sdk.Providers;
 using Colorful;
 using CommandLine;
 using Common;
+using OpenSSL.Core;
 using Console = Colorful.Console;
 
 // Warnings disabled based on CommandLine requirements
@@ -31,6 +32,7 @@ namespace ContainerCrudUtility
 
         private static void Main(string[] args)
         {
+            FIPS.Enabled = true;
             ProgramOptions parsed = null;
             IEnumerable<Error> notParsed = null;
             Parser.Default.ParseArguments<ProgramOptions>(args)

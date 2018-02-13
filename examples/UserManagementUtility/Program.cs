@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using OpenSSL.Core;
 using Console = Colorful.Console;
 
 // Warnings disabled based on CommandLine requirements
@@ -40,6 +41,7 @@ namespace UserManagementUtility
 
         public static void Main(string[] args)
         {
+            FIPS.Enabled = true;
             ProgramOptions parsed = null;
             IEnumerable<Error> notParsed = null;
             Parser.Default.ParseArguments<ProgramOptions>(args)
