@@ -1,17 +1,15 @@
-﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Text;
-using Absio.Sdk.Container;
+﻿using Absio.Sdk.Container;
 using Absio.Sdk.Events;
 using Absio.Sdk.Exceptions;
-using Absio.Sdk.Providers;
 using Colorful;
 using CommandLine;
 using Common;
 using OpenSSL.Core;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
 using Console = Colorful.Console;
 
 // Warnings disabled based on CommandLine requirements
@@ -286,11 +284,19 @@ namespace ContainerCrudUtility
                 byte[] content;
                 string header = null;
                 string type = null;
-                if (options.File != null)
+                var file = options.File;
+                if (file != null)
                 {
+                    if (!File.Exists(file))
+                    {
+                        var error = "You must specify a file that exists.";
+                        Console.WriteLine(error);
+                        return error;
+                    }
+
                     type = "File";
-                    header = Path.GetFileName(options.File);
-                    using (var fileStream = File.OpenRead(options.File))
+                    header = Path.GetFileName(file);
+                    using (var fileStream = File.OpenRead(file))
                     {
                         using (var memoryStream = new MemoryStream())
                         {
@@ -478,9 +484,17 @@ namespace ContainerCrudUtility
             private string RunUpdateCommand(UpdateOptions options)
             {
                 byte[] content = null;
-                if (!string.IsNullOrEmpty(options.File))
+                var file = options.File;
+                if (!string.IsNullOrEmpty(file))
                 {
-                    using (var fileStream = File.OpenRead(options.File))
+                    if (!File.Exists(file))
+                    {
+                        var error = "You must specify a file that exists.";
+                        Console.WriteLine(error);
+                        return error;
+                    }
+
+                    using (var fileStream = File.OpenRead(file))
                     {
                         using (var memoryStream = new MemoryStream())
                         {
@@ -494,7 +508,7 @@ namespace ContainerCrudUtility
                 var header = options.Header;
 
                 List<ContainerAccessLevel> access = null;
-                if (header != null || options.File != null)
+                if (header != null || file != null)
                 {
                     Console.WriteLine("Would you like to grant access to other users? Yes/No");
                     var response = Console.ReadLine();
