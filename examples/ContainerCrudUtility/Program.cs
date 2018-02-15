@@ -484,7 +484,10 @@ namespace ContainerCrudUtility
             private string RunUpdateCommand(UpdateOptions options)
             {
                 byte[] content = null;
+                var type = options.Type;
+                var header = options.Header;
                 var file = options.File;
+
                 if (!string.IsNullOrEmpty(file))
                 {
                     if (!File.Exists(file))
@@ -493,6 +496,9 @@ namespace ContainerCrudUtility
                         Console.WriteLine(error);
                         return error;
                     }
+
+                    type = "File";
+                    header = Path.GetFileName(file);
 
                     using (var fileStream = File.OpenRead(file))
                     {
@@ -503,9 +509,6 @@ namespace ContainerCrudUtility
                         }
                     }
                 }
-
-                var type = options.Type;
-                var header = options.Header;
 
                 List<ContainerAccessLevel> access = null;
                 if (header != null || file != null)
