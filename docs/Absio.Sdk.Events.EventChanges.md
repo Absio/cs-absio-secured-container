@@ -1,6 +1,6 @@
 ## `AccessChange`
 
-Contains changes made to a particular ContainerAccessLevel stored on Absio Broker® application.
+Contains changes made to a particular ContainerAccessLevel stored on Absio Broker™ application.
 ```csharp
 public class Absio.Sdk.Events.EventChanges.AccessChange
     : IEquatable<AccessChange>
@@ -32,7 +32,7 @@ Methods
 
 ## `ContainerEventChanges`
 
-Contains a list of changes made to an IContainer and its ContainerAccessLevel stored on the Absio Broker® application.
+Contains a list of changes made to an IContainer and its ContainerAccessLevel stored on the Absio Broker™ application.
 ```csharp
 public class Absio.Sdk.Events.EventChanges.ContainerEventChanges
     : IEquatable<ContainerEventChanges>
@@ -60,7 +60,7 @@ Methods
 
 ## `SecuredContainerChanges`
 
-Contains changes made to a particular IContainer stored on Absio Broker® application.
+Contains changes made to a particular IContainer stored on Absio Broker™ application.
 ```csharp
 public class Absio.Sdk.Events.EventChanges.SecuredContainerChanges
     : IEquatable<SecuredContainerChanges>

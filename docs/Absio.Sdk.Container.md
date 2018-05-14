@@ -1,6 +1,6 @@
 ## `AccessNotification`
 
-Represents when a user accessed a Container from the Absio Broker® application.
+Represents when a user accessed a Container from the Absio Broker™ application.
 ```csharp
 public class Absio.Sdk.Container.AccessNotification
     : IEquatable<AccessNotification>
@@ -126,7 +126,7 @@ Methods
 
 ## `ContainerMetadata`
 
-Descriptive information about a SecuredContainer/IContainer, including access, timestamps, length, categorical type and the ID.  NOTE: while Absio typically thinks of the type field as a categorical descriptor of the container, it can take on any value desired.  It is stored in the encrypted database in the OfsProvider and on the Absio Broker® application's database for the ServerProvider.  It can  be used to help access data or used for quick access to rules/control/etc associated with the container.  It is simply a string  so you can put anything in there you desire.
+Descriptive information about a SecuredContainer/IContainer, including access, timestamps, length, categorical type and the ID.  NOTE: while Absio typically thinks of the type field as a categorical descriptor of the container, it can take on any value desired.  It is stored in the encrypted database in the OfsProvider and on the Absio Broker™ application's database for the ServerProvider.  It can  be used to help access data or used for quick access to rules/control/etc associated with the container.  It is simply a string  so you can put anything in there you desire.
 ```csharp
 public class Absio.Sdk.Container.ContainerMetadata
 
@@ -183,7 +183,7 @@ Methods
 
 ## `Permission`
 
-Represents various permissions that can be granted to a user with access to a SecuredContainer.  These permissions will be enforced by the Absio Broker® application when using the ServerProvider, and  will restrict certain information from being shared with the user.  The OfsProvider will not  enforce the adherence to the permissions.  It is up to all providers to determine how, if at  all, they would like to enforce permissions.  The same is true of the Mappers that a Provider  uses.
+Represents various permissions that can be granted to a user with access to a SecuredContainer.  These permissions will be enforced by the Absio Broker™ application when using the ServerProvider, and  will restrict certain information from being shared with the user.  The OfsProvider will not  enforce the adherence to the permissions.  It is up to all providers to determine how, if at  all, they would like to enforce permissions.  The same is true of the Mappers that a Provider  uses.
 ```csharp
 public enum Absio.Sdk.Container.Permission
     : Enum, IComparable, IFormattable, IConvertible

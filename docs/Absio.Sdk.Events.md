@@ -1,6 +1,6 @@
 ## `ContainerEvent`
 
-Represents a Container-related event tracked by the Absio Broker® application.
+Represents a Container-related event tracked by the Absio Broker™ application.
 ```csharp
 public class Absio.Sdk.Events.ContainerEvent
     : AbstractEvent, IEquatable<AbstractEvent>
@@ -44,14 +44,14 @@ Enum
 | Value | Name | Summary | 
 | --- | --- | --- | 
 | `0` | Accessed | IContainer was accessed by a user. | 
-| `1` | Added | IContainer was stored on the Absio Broker® application. | 
-| `2` | Deleted | Access to an IContainer was removed on the Absio Broker® application. | 
-| `4` | Updated | IContainer was updated on the Absio Broker® application. | 
+| `1` | Added | IContainer was stored on the Absio Broker™ application. | 
+| `2` | Deleted | Access to an IContainer was removed on the Absio Broker™ application. | 
+| `4` | Updated | IContainer was updated on the Absio Broker™ application. | 
 
 
 ## `EventPackageJson`
 
-This class is used for returning lists of events from the Absio Broker® application.  Events are returned as JSON in the REST request.  A block of events is represented as a package.  Events are returned from the server in these packages as ONLY a limited number  of events will be returned at a given time.  Thus, the package has the HasMore flag to denote if there is another package to  process from the Absio Broker® application.
+This class is used for returning lists of events from the Absio Broker™ application.  Events are returned as JSON in the REST request.  A block of events is represented as a package.  Events are returned from the server in these packages as ONLY a limited number  of events will be returned at a given time.  Thus, the package has the HasMore flag to denote if there is another package to  process from the Absio Broker™ application.
 ```csharp
 public class Absio.Sdk.Events.EventPackageJson
     : IEquatable<EventPackageJson>
@@ -78,7 +78,7 @@ Methods
 
 ## `EventType`
 
-This is an enumeration of the different types of events that the Absio Broker® application tracks and manages.
+This is an enumeration of the different types of events that the Absio Broker™ application tracks and manages.
 ```csharp
 public enum Absio.Sdk.Events.EventType
     : Enum, IComparable, IFormattable, IConvertible

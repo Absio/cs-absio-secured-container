@@ -182,7 +182,7 @@ public class Absio.Sdk.Exceptions.LicenseKeyExceededException
 
 ## `NotFoundException`
 
-Specialized exception class to be used when the container was not found on the Absio Broker® application.
+Specialized exception class to be used when the container was not found on the Absio Broker™ application.
 ```csharp
 public class Absio.Sdk.Exceptions.NotFoundException
     : AbsioCodedException, ISerializable, _Exception
@@ -299,7 +299,7 @@ Static Fields
 
 ## `ServerConnectionException`
 
-Specialized exception class to be used when there is a problem connecting to the Absio Broker® application
+Specialized exception class to be used when there is a problem connecting to the Absio Broker™ application
 ```csharp
 public class Absio.Sdk.Exceptions.ServerConnectionException
     : AbsioCodedException, ISerializable, _Exception
@@ -308,7 +308,7 @@ public class Absio.Sdk.Exceptions.ServerConnectionException
 
 ## `ServerErrorException`
 
-Thrown when the Absio Broker® application rejects an API call.
+Thrown when the Absio Broker™ application rejects an API call.
 ```csharp
 public class Absio.Sdk.Exceptions.ServerErrorException
     : Exception, ISerializable, _Exception
