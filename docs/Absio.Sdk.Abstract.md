@@ -44,7 +44,7 @@ Properties
 
 ## `AbstractServerMapper`
 
-The base class for all Server Mappers (for mapping data to the Absio Broker application).
+The base class for all Server Mappers (for mapping data to the Absio Broker® application).
 ```csharp
 public abstract class Absio.Sdk.Abstract.AbstractServerMapper
 

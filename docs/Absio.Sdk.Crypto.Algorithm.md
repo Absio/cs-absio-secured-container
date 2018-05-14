@@ -46,92 +46,6 @@ Static Methods
 | `List<CipherAlgorithmType>` | Values() |  | 
 
 
-## `EllipticCurveDerivationAlgorithmType`
-
-Enumeration for elliptic curve cryptographic derivation algorithms used by the Absio service.
-```csharp
-public class Absio.Sdk.Crypto.Algorithm.EllipticCurveDerivationAlgorithmType
-    : IAlgorithmType
-
-```
-
-Properties
-
-| Type | Name | Summary | 
-| --- | --- | --- | 
-| `String` | Algorithm | The cryptographic algorithm name. | 
-| `Int32` | Index | The index of the algorithm. | 
-| `Int32` | KeySize | Output size of keys generated with this algorithm type. | 
-| `Int32` | KeySizeInBits | Get the key size in bits for this algorithm. | 
-| `Int32` | OutputSize | Output size of keys generated with this algorithm type. | 
-
-
-Methods
-
-| Type | Name | Summary | 
-| --- | --- | --- | 
-| `Boolean` | Equals(`Object` obj) |  | 
-| `Int32` | GetHashCode() |  | 
-
-
-Static Fields
-
-| Type | Name | Summary | 
-| --- | --- | --- | 
-| `EllipticCurveDerivationAlgorithmType` | Curve25519 | Represents the Curve25519 algorithm for use with Elliptic-Curve Diffie-Hellman. | 
-
-
-Static Methods
-
-| Type | Name | Summary | 
-| --- | --- | --- | 
-| `EllipticCurveDerivationAlgorithmType` | GetByIndex(`Int32` index) | Retrieves a EllipticCurveDerivationAlgorithmType by its enumeration index. | 
-| `List<EllipticCurveDerivationAlgorithmType>` | Values() |  | 
-
-
-## `EllipticCurveSigningAlgorithmType`
-
-Enumeration for elliptic curve signing algorithms used by the Absio service.
-```csharp
-public class Absio.Sdk.Crypto.Algorithm.EllipticCurveSigningAlgorithmType
-    : IAlgorithmType
-
-```
-
-Properties
-
-| Type | Name | Summary | 
-| --- | --- | --- | 
-| `String` | Algorithm | The cryptographic algorithm name. | 
-| `Int32` | Index | The index of the algorithm. | 
-| `Int32` | KeySize | Output size of keys generated with this algorithm type. | 
-| `Int32` | KeySizeInBits | Get the key size in bits for this algorithm. | 
-| `Int32` | OutputSize | Output size of signatures generated with this algorithm type. | 
-
-
-Methods
-
-| Type | Name | Summary | 
-| --- | --- | --- | 
-| `Boolean` | Equals(`Object` obj) |  | 
-| `Int32` | GetHashCode() |  | 
-
-
-Static Fields
-
-| Type | Name | Summary | 
-| --- | --- | --- | 
-| `EllipticCurveSigningAlgorithmType` | Ed25519 | Represents the Ed25519 algorithm for use with Elliptic-Curve signing. | 
-
-
-Static Methods
-
-| Type | Name | Summary | 
-| --- | --- | --- | 
-| `EllipticCurveSigningAlgorithmType` | GetByIndex(`Int32` index) | Retrieves a EllipticCurveSigningAlgorithmType by its enumeration index. | 
-| `List<EllipticCurveSigningAlgorithmType>` | Values() |  | 
-
-
 ## `IAlgorithmType`
 
 Interface for cryptographic algorithm enumerations.
@@ -174,7 +88,7 @@ Static Fields
 
 | Type | Name | Summary | 
 | --- | --- | --- | 
-| `MacAlgorithmType` | HmacSha256 | Algorithm specification for HMAC-SHA256. | 
+| `MacAlgorithmType` | HmacSha384 | Algorithm specification for HMAC-SHA384. | 
 
 
 Static Methods

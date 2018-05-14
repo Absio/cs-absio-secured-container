@@ -23,6 +23,9 @@
 
 ## [Absio.Sdk.Crypto](Absio.Sdk.Crypto.md)
 
+- [`DecryptedEccData`](Absio.Sdk.Crypto.md#decryptedeccdata)
+- [`EccUtils`](Absio.Sdk.Crypto.md#eccutils)
+- [`KeyFileSettings`](Absio.Sdk.Crypto.md#keyfilesettings)
 - [`KeyRing`](Absio.Sdk.Crypto.md#keyring)
 - [`KeyType`](Absio.Sdk.Crypto.md#keytype)
 - [`PublicKeyMetadata`](Absio.Sdk.Crypto.md#publickeymetadata)
@@ -30,15 +33,19 @@
 ## [Absio.Sdk.Crypto.Algorithm](Absio.Sdk.Crypto.Algorithm.md)
 
 - [`CipherAlgorithmType`](Absio.Sdk.Crypto.Algorithm.md#cipheralgorithmtype)
-- [`EllipticCurveDerivationAlgorithmType`](Absio.Sdk.Crypto.Algorithm.md#ellipticcurvederivationalgorithmtype)
-- [`EllipticCurveSigningAlgorithmType`](Absio.Sdk.Crypto.Algorithm.md#ellipticcurvesigningalgorithmtype)
 - [`IAlgorithmType`](Absio.Sdk.Crypto.Algorithm.md#ialgorithmtype)
 - [`MacAlgorithmType`](Absio.Sdk.Crypto.Algorithm.md#macalgorithmtype)
 
+## [Absio.Sdk.Crypto.CryptoJsonConverters](Absio.Sdk.Crypto.CryptoJsonConverters.md)
+
+- [`DerivationKeyJsonConverter`](Absio.Sdk.Crypto.CryptoJsonConverters.md#derivationkeyjsonconverter)
+- [`EllipticCurveKeyJsonConverter`](Absio.Sdk.Crypto.CryptoJsonConverters.md#ellipticcurvekeyjsonconverter)
+- [`SigningKeyJsonConverter`](Absio.Sdk.Crypto.CryptoJsonConverters.md#signingkeyjsonconverter)
+
 ## [Absio.Sdk.Crypto.Keys](Absio.Sdk.Crypto.Keys.md)
 
-- [`AbstractKey<T>`](Absio.Sdk.Crypto.Keys.md#abstractkeyt)
 - [`DerivationKey`](Absio.Sdk.Crypto.Keys.md#derivationkey)
+- [`EllipticCurveKey`](Absio.Sdk.Crypto.Keys.md#ellipticcurvekey)
 - [`IKey`](Absio.Sdk.Crypto.Keys.md#ikey)
 - [`SigningKey`](Absio.Sdk.Crypto.Keys.md#signingkey)
 
@@ -96,9 +103,11 @@
 - [`IncorrectArgumentException`](Absio.Sdk.Exceptions.md#incorrectargumentexception)
 - [`InsufficientPermissionsException`](Absio.Sdk.Exceptions.md#insufficientpermissionsexception)
 - [`InvalidException`](Absio.Sdk.Exceptions.md#invalidexception)
+- [`KeyException`](Absio.Sdk.Exceptions.md#keyexception)
 - [`KeyFileDecryptionException`](Absio.Sdk.Exceptions.md#keyfiledecryptionexception)
 - [`KeyFileDoesNotExistLocallyException`](Absio.Sdk.Exceptions.md#keyfiledoesnotexistlocallyexception)
 - [`KeyFileRescueException`](Absio.Sdk.Exceptions.md#keyfilerescueexception)
+- [`KeyFileSettingsException`](Absio.Sdk.Exceptions.md#keyfilesettingsexception)
 - [`KeyFileUsedException`](Absio.Sdk.Exceptions.md#keyfileusedexception)
 - [`LicenseKeyExceededException`](Absio.Sdk.Exceptions.md#licensekeyexceededexception)
 - [`NotFoundException`](Absio.Sdk.Exceptions.md#notfoundexception)
@@ -115,6 +124,7 @@
 - [`ServerExceptionMessages`](Absio.Sdk.Exceptions.md#serverexceptionmessages)
 - [`UserSuspendedViaWebClientException`](Absio.Sdk.Exceptions.md#usersuspendedviawebclientexception)
 - [`UserTerminatedException`](Absio.Sdk.Exceptions.md#userterminatedexception)
+- [`VersionException`](Absio.Sdk.Exceptions.md#versionexception)
 
 ## [Absio.Sdk.Interfaces](Absio.Sdk.Interfaces.md)
 

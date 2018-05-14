@@ -30,7 +30,7 @@ Methods
 | Type | Name | Summary | 
 | --- | --- | --- | 
 | `Task` | CreateOrUpdateAsync(`PublicKeyMetadata` keyMetadata) | Creates or updates the public key in the encrypted database in the OFS. | 
-| `Task` | CreateOrUpdateAsync(`Guid` userId, `Boolean` active, `Int32` index, `KeyType` type, `Byte[]` key, `Int32` algorithmIndex) | Creates or updates the public key in the encrypted database in the OFS. | 
+| `Task` | CreateOrUpdateAsync(`Guid` userId, `Boolean` active, `Int32` index, `KeyType` type, `Byte[]` key) | Creates or updates the public key in the encrypted database in the OFS. | 
 | `Task` | DeleteAsync(`Guid` userId, `Nullable<KeyType>` type, `Nullable<Int32>` index) | This deletes all public keys that match the user ID, type and index from the encrypted database in the OFS. | 
 | `Task<PublicKeyMetadata>` | GetAsync(`Guid` userId, `KeyType` type, `Int32` index) | This gets the public key that match the user ID, type and index from the encrypted database in the OFS. | 
 | `Task<PublicKeyMetadata>` | GetIndexAsync(`Guid` userId, `KeyType` type, `Int32` index) | This gets the public key that match the user ID, type and index from the encrypted database in the OFS.  This calls GetAsync.  It is needed for the IPublicKeySource interface. | 

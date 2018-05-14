@@ -121,6 +121,15 @@ public class Absio.Sdk.Exceptions.InvalidException
 
 ```
 
+## `KeyException`
+
+This thrown when a there is an issue with a Key.  For instance, if the Key type index is not supported this exception will be thrown.
+```csharp
+public class Absio.Sdk.Exceptions.KeyException
+    : Exception, ISerializable, _Exception
+
+```
+
 ## `KeyFileDecryptionException`
 
 ```csharp
@@ -145,6 +154,14 @@ public class Absio.Sdk.Exceptions.KeyFileRescueException
 
 ```
 
+## `KeyFileSettingsException`
+
+```csharp
+public class Absio.Sdk.Exceptions.KeyFileSettingsException
+    : Exception, ISerializable, _Exception
+
+```
+
 ## `KeyFileUsedException`
 
 Specialized exception class to be used when the number of uses of a key file would be exceeded
@@ -165,7 +182,7 @@ public class Absio.Sdk.Exceptions.LicenseKeyExceededException
 
 ## `NotFoundException`
 
-Specialized exception class to be used when the container was not found on the Absio Broker application.
+Specialized exception class to be used when the container was not found on the Absio Broker® application.
 ```csharp
 public class Absio.Sdk.Exceptions.NotFoundException
     : AbsioCodedException, ISerializable, _Exception
@@ -282,7 +299,7 @@ Static Fields
 
 ## `ServerConnectionException`
 
-Specialized exception class to be used when there is a problem connecting to the Absio Broker application
+Specialized exception class to be used when there is a problem connecting to the Absio Broker® application
 ```csharp
 public class Absio.Sdk.Exceptions.ServerConnectionException
     : AbsioCodedException, ISerializable, _Exception
@@ -291,7 +308,7 @@ public class Absio.Sdk.Exceptions.ServerConnectionException
 
 ## `ServerErrorException`
 
-Thrown when the Absio Broker application rejects an API call.
+Thrown when the Absio Broker® application rejects an API call.
 ```csharp
 public class Absio.Sdk.Exceptions.ServerErrorException
     : Exception, ISerializable, _Exception
@@ -465,6 +482,15 @@ Specialized exception to be used when a user has been terminated
 ```csharp
 public class Absio.Sdk.Exceptions.UserTerminatedException
     : AbsioCodedException, ISerializable, _Exception
+
+```
+
+## `VersionException`
+
+This thrown when a particular version of a portion of the SDK is not supported.  For instance, if the ECC version is not supported this exception will be thrown.
+```csharp
+public class Absio.Sdk.Exceptions.VersionException
+    : Exception, ISerializable, _Exception
 
 ```
 
