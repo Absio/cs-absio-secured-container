@@ -34,9 +34,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AbsioCrypto, Version=1.4.0.0, Culture=neutral, PublicKeyToken=1d4ee9d1b67c81cc, processorArchitecture=MSIL">
-      <HintPath>..\packages\AbsioCrypto.1.4.0\lib\netstandard11\AbsioCrypto.dll</HintPath>
-    </Reference>
     <Reference Include="AbsioESQLite.Bindings.Common, Version=1.0.1.0, Culture=neutral, PublicKeyToken=1d4ee9d1b67c81cc, processorArchitecture=MSIL">
       <HintPath>..\packages\AbsioESQLite.1.0.2\lib\net45\AbsioESQLite.Bindings.Common.dll</HintPath>
     </Reference>
@@ -46,8 +43,13 @@
     <Reference Include="AbsioESQLite.Core, Version=1.0.1.0, Culture=neutral, PublicKeyToken=1d4ee9d1b67c81cc, processorArchitecture=MSIL">
       <HintPath>..\packages\AbsioESQLite.1.0.2\lib\net45\AbsioESQLite.Core.dll</HintPath>
     </Reference>
-    <Reference Include="AbsioSdk, Version=1.2.1.0, Culture=neutral, PublicKeyToken=1d4ee9d1b67c81cc, processorArchitecture=MSIL">
-      <HintPath>..\packages\AbsioSdk.1.2.1\lib\netstandard13\AbsioSdk.dll</HintPath>
+    <Reference Include="AbsioSdk, Version=2.1.0.0, Culture=neutral, PublicKeyToken=1d4ee9d1b67c81cc">
+      <HintPath>..\packages\AbsioSdk.2.1.0-rc-49\lib\netstandard20\AbsioSdk.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ManagedOpenSsl, Version=0.7.3.0, Culture=neutral, PublicKeyToken=ce8641bb9d33ccd4">
+      <HintPath>..\packages\openssl-net.0.7.3\lib\net20\ManagedOpenSsl.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>

@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Absio.Crypto.Util;
-using Absio.Sdk.Container;
+using Absio.Sdk.Crypto.Util;
 using Absio.Sdk.Exceptions;
-using Absio.Sdk.Providers;
 
 namespace SelfManagedProvider
 {
@@ -30,11 +26,17 @@ namespace SelfManagedProvider
             var selfProvider = new SelfManagedProvider();
             selfProvider.Initialize(ServerUrl, ApiKey, ApplicationName, OfsRoot);
 
-            await selfProvider.LogInAsync(new Guid("083c92bd-607b-447c-9cd4-6a6294e04250"), "Password#1", "Passphrase#1");
+            await selfProvider.RegisterAsync("Password#1", "Passphrase#1");
+            Debug.Assert(selfProvider.UserId != null, "selfProvider.UserId != null");
+            Guid userId = (Guid) selfProvider.UserId; 
+            
+            selfProvider.Logout();
+
+            await selfProvider.LogInAsync(userId, "Password#1", "Passphrase#1");
 
             //Now you, the app developer, decide where to store the data.  Here's an example:
             var content = "Content";
-            string path = @"c:\temp\MyTest.container";
+            string path = Path.GetTempFileName();
             var type = "type";
             var container = await selfProvider.CreateAsync(Encoding.ASCII.GetBytes(content), "Custom Header", null, type);
 
@@ -48,7 +50,7 @@ namespace SelfManagedProvider
 
             if (!GeneralUtils.ListEquals(fileBytes, container.Bytes()))
             {
-                throw new ArgumentException("error");
+                throw new ArgumentException("The file contents was not the expected container.");
             }
 
             var newContainer = await selfProvider.GetAsync(container.Metadata.Id, fileBytes);
@@ -56,12 +58,12 @@ namespace SelfManagedProvider
 
             if (content != content2)
             {
-                throw new ArgumentException("error");
+                throw new ArgumentException("The container content did not match.");
             }
 
             if (newContainer.Metadata.Type != type)
             {
-                throw new ArgumentException("error");
+                throw new ArgumentException("The container types did not match.");
             }
 
             var newContent = "new content";
@@ -73,24 +75,26 @@ namespace SelfManagedProvider
 
             if (newContent != decryptedUpdatedContent)
             {
-                throw new ArgumentException("error");
+                throw new ArgumentException("The decrypted content was not the same as the original.");
             }
 
             if (decryptedUpdatedContainer.Metadata.Type != newType)
             {
-                throw new ArgumentException("error");
+                throw new ArgumentException("The decrypted type was not the same as the original.");
             }
 
             await selfProvider.DeleteAsync(container.Metadata.Id);
 
             try
             {
-                decryptedUpdatedContainer = await selfProvider.GetAsync(container.Metadata.Id, updatedContainer.Bytes());
-                throw new ArgumentException("error");
+                await selfProvider.GetAsync(container.Metadata.Id, updatedContainer.Bytes());
+                throw new ArgumentException("The container was available after a delete request.");
             }
             catch (NotFoundException )
             {
             }
+
+            await selfProvider.DeleteUserAsync();
         }
     }
 }

@@ -53,14 +53,14 @@ namespace UserManagementUtility
                 return;
             }
 
-            _apiKey = parsed.ApiKey;
-            _serverUrl = parsed.Url;
+            ApiKey = parsed.ApiKey;
+            ServerUrl = parsed.Url;
             if (!SetProviderType(parsed.Provider))
             {
                 ShowMessageAndWaitForKeyPress("Invalid Provider Type.  Must be Ofs, Server or ServerCacheOfs.");
                 return;
             }
-            _baseDir = Path.Combine(Directory.GetCurrentDirectory(), "data");
+            BaseDir = Path.Combine(Directory.GetCurrentDirectory(), "data");
             InitializeProvider(ApplicationName);
 
             //Start prompt with completions
@@ -77,7 +77,7 @@ namespace UserManagementUtility
 
             var eval = new LoggedInCommandEvaluator();
 
-            var prompt = _userId + "> ";
+            var prompt = UserId + "> ";
 
             InteractivePrompt.Run(
                 (command, listCommand, completions) => eval.HandleCommand(command) + Environment.NewLine, prompt,
@@ -188,13 +188,13 @@ namespace UserManagementUtility
                 }
 
                 // Get the KeyRing...
-                var keyRing = _provider.KeyRing;
+                var keyRing = Provider.KeyRing;
 
                 // reset the provider
                 ResetSession(ApplicationName);
 
                 // Authenticate with the KeyRing.
-                _provider.LogInAsync(keyRing);
+                Provider.LogInAsync(keyRing);
 
                 return string.Empty;
             }
@@ -210,7 +210,7 @@ namespace UserManagementUtility
                 {
                     try
                     {
-                        _provider.DeleteUserAsync().Wait();
+                        Provider.DeleteUserAsync().Wait();
                         ShowMessageAndWaitForKeyPress("User has been deleted.");
                         ShowLoggedOutPrompt();
                     }
@@ -357,8 +357,8 @@ namespace UserManagementUtility
                 try
                 {
                     var userId = new Guid(opts.UserId);
-                    _provider.LogInAsync(userId, opts.Password, opts.Passphrase).Wait();
-                    _userId = userId;
+                    Provider.LogInAsync(userId, opts.Password, opts.Passphrase).Wait();
+                    UserId = userId;
                     ShowLoggedInPrompt();
                 }
                 catch (AggregateException e)
@@ -377,7 +377,7 @@ namespace UserManagementUtility
             {
                 try
                 {
-                    _userId = RegisterWithProvider(opts.Password, opts.Passphrase, opts.Reminder);
+                    UserId = RegisterWithProvider(opts.Password, opts.Passphrase, opts.Reminder);
                     ShowLoggedInPrompt();
                 }
                 catch (AggregateException e)

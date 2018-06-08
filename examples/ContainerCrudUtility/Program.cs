@@ -42,14 +42,14 @@ namespace ContainerCrudUtility
                 return;
             }
 
-            _apiKey = parsed.ApiKey;
-            _serverUrl = parsed.Url;
+            ApiKey = parsed.ApiKey;
+            ServerUrl = parsed.Url;
             if (!SetProviderType(parsed.Provider))
             {
                 ShowMessageAndWaitForKeyPress("Invalid Provider Type.  Must be Ofs, Server or ServerCacheOfs.");
                 return;
             }
-            _baseDir = Path.Combine(Directory.GetCurrentDirectory(), "data");
+            BaseDir = Path.Combine(Directory.GetCurrentDirectory(), "data");
             InitializeProvider(ApplicationName);
 
             //Start prompt with completions
@@ -66,7 +66,7 @@ namespace ContainerCrudUtility
 
             var eval = new LoggedInCommandEvaluator();
 
-            var prompt = _userId + "> ";
+            var prompt = UserId + "> ";
 
             InteractivePrompt.Run(
                 (command, listCommand, completions) => eval.HandleCommand(command) + Environment.NewLine, prompt,
@@ -268,13 +268,13 @@ namespace ContainerCrudUtility
                 }
 
                 // Get the KeyRing...
-                var keyRing = _provider.KeyRing;
+                var keyRing = Provider.KeyRing;
 
                 // reset the provider
                 ResetSession(ApplicationName);
 
                 // Authenticate with the KeyRing.
-                _provider.LogInAsync(keyRing);
+                Provider.LogInAsync(keyRing);
 
                 return string.Empty;
             }
@@ -363,11 +363,11 @@ namespace ContainerCrudUtility
                     }
                 }
 
-                var securedContainer = _provider.CreateAsync(content, header, access, type).Result;
+                var securedContainer = Provider.CreateAsync(content, header, access, type).Result;
 
                 Console.WriteLine($"Successfully created container : {securedContainer.Metadata.Id}");
                 Console.WriteLine();
-                PrintContainerToConsole(_provider.GetAsync(securedContainer.Metadata.Id).Result);
+                PrintContainerToConsole(Provider.GetAsync(securedContainer.Metadata.Id).Result);
 
                 return string.Empty;
             }
@@ -383,7 +383,7 @@ namespace ContainerCrudUtility
                 {
                     try
                     {
-                        _provider.DeleteAsync(new Guid(options.Id)).Wait();
+                        Provider.DeleteAsync(new Guid(options.Id)).Wait();
                         ShowMessageAndWaitForKeyPress("Container has been deleted.");
                     }
                     catch (AggregateException e)
@@ -454,7 +454,7 @@ namespace ContainerCrudUtility
             {
                 try
                 {
-                    var container = _provider.GetAsync(options.Id).Result;
+                    var container = Provider.GetAsync(options.Id).Result;
                     PrintContainerToConsole(container, true);
 
                     if (!string.IsNullOrEmpty(options.File))
@@ -544,7 +544,7 @@ namespace ContainerCrudUtility
                 var containerId = options.Id;
                 try
                 {
-                    _provider.UpdateAsync(containerId, content, header, access, type).Wait();
+                    Provider.UpdateAsync(containerId, content, header, access, type).Wait();
                 }
                 catch (AggregateException e)
                 {
@@ -566,7 +566,7 @@ namespace ContainerCrudUtility
 
                 Console.WriteLine($"Successfully updated container : {containerId.ToString()}");
                 Console.WriteLine();
-                PrintContainerToConsole(_provider.GetAsync(containerId).Result);
+                PrintContainerToConsole(Provider.GetAsync(containerId).Result);
 
                 return string.Empty;
             }
@@ -734,8 +734,8 @@ namespace ContainerCrudUtility
                 try
                 {
                     var userId = new Guid(opts.UserId);
-                    _provider.LogInAsync(userId, opts.Password, opts.Passphrase).Wait();
-                    _userId = userId;
+                    Provider.LogInAsync(userId, opts.Password, opts.Passphrase).Wait();
+                    UserId = userId;
                     ShowLoggedInPrompt();
                 }
                 catch (AggregateException e)
@@ -754,7 +754,7 @@ namespace ContainerCrudUtility
             {
                 try
                 {
-                    _userId = RegisterWithProvider(opts.Password, opts.Passphrase, opts.Reminder);
+                    UserId = RegisterWithProvider(opts.Password, opts.Passphrase, opts.Reminder);
                     ShowLoggedInPrompt();
                 }
                 catch (AggregateException e)
