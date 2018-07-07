@@ -1,0 +1,492 @@
+﻿<Window x:Class="KeyManagementUtilityUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:viewModels="clr-namespace:KeyManagementUtilityUI.ViewModels"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
+        Title="MainWindow" SizeToContent="Height" Width="600">
+    <TabControl>
+        <TabItem Header="Symmetric">
+            <TabItem.DataContext>
+                <viewModels:SymmetricViewModel/>
+            </TabItem.DataContext>
+            <StackPanel Grid.IsSharedSizeScope="true">
+                <GroupBox>
+                    <GroupBox.Header>
+                        <Label>Key Generation</Label>
+                    </GroupBox.Header>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="SecondColumn"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FourthColumn"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0" Content="Key Size"/>
+                        <RadioButton Grid.Row="0" Grid.Column="1" GroupName="GenerateKeySize" Content="Default Size" IsChecked="True"/>
+                        <RadioButton x:Name="ManualSizeRadio" Grid.Row="1" Grid.Column="1" GroupName="GenerateKeySize" Content="Size" IsChecked="{Binding Path=GenerateWithKeySizeIsChecked, Mode=OneWayToSource}"/>
+                        <TextBox Grid.Row="1" Grid.Column="2" IsEnabled="{Binding IsChecked, ElementName=ManualSizeRadio}" Text="{Binding Path=GenerateKeySize, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Separator Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Background="LightGray" Margin="5, 10, 5, 10"/>
+                        <Button Grid.Row="3" Grid.Column="0" Content="Generate" Command="{Binding GenerateKeyCommand}"/>
+                        <TextBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" IsReadOnly="True" Text="{Binding Path=GeneratedKey, Mode=OneWay}"/>
+                    </Grid>
+                </GroupBox>
+                <GroupBox>
+                    <GroupBox.Header>
+                        <Label>Encryption</Label>
+                    </GroupBox.Header>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="SecondColumn"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FourthColumn"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0" Content="Key"/>
+                        <RadioButton Grid.Row="0" Grid.Column="1" GroupName="EncKey" Content="Random" IsChecked="True"/>
+                        <RadioButton x:Name="KeyHexRadio" Grid.Row="1" Grid.Column="1" GroupName="EncKey" Content="Hex Input" IsChecked="{Binding Path=EncryptHexKeyIsChecked, Mode=OneWayToSource}"/>
+                        <TextBox Grid.Row="1" Grid.Column="2" IsEnabled="{Binding IsChecked, ElementName=KeyHexRadio}" Text="{Binding Path=EncryptHexKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Separator Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Background="LightGray" Margin="5, 10, 5, 10"/>
+                        <Label Grid.Row="3" Grid.Column="0" Content="IV"/>
+                        <RadioButton Grid.Row="3" Grid.Column="1" GroupName="EncIV" Content="Random" IsChecked="True"/>
+                        <RadioButton x:Name="IvHexRadio" Grid.Row="4" Grid.Column="1" GroupName="EncIV" Content="Hex Input" IsChecked="{Binding Path=EncryptHexIvIsChecked, Mode=OneWayToSource}"/>
+                        <TextBox Grid.Row="4" Grid.Column="2" IsEnabled="{Binding IsChecked, ElementName=IvHexRadio}" Text="{Binding Path=EncryptHexIv, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Separator Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="4" Background="LightGray" Margin="5, 10, 5, 10"/>
+                        <Label Grid.Row="6" Grid.Column="0" Content="Text"/>
+                        <TextBox Grid.Row="6" Grid.Column="2" Text="{Binding Path=EncryptInputText, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Separator Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="4" Background="LightGray" Margin="5, 10, 5, 10"/>
+                        <Button Grid.Row="8" Grid.Column="0" Content="Encrypt" Command="{Binding EncryptCommand}"/>
+                        <TextBox Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="2" IsReadOnly="True" Text="{Binding Path=EncryptOutputText, Mode=OneWay}"/>
+                    </Grid>
+                </GroupBox>
+                <GroupBox>
+                    <GroupBox.Header>
+                        <Label>Decryption</Label>
+                    </GroupBox.Header>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="SecondColumn"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FourthColumn"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0" Content="Key"/>
+                        <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding Path=DecryptKeyText, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Separator Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Background="LightGray" Margin="5, 10, 5, 10"/>
+                        <Label Grid.Row="3" Grid.Column="0" Content="IV"/>
+                        <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding Path=DecryptIvText, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Separator Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Background="LightGray" Margin="5, 10, 5, 10"/>
+                        <Label Grid.Row="5" Grid.Column="0" Content="Input"/>
+                        <TextBox Grid.Row="5" Grid.Column="2" Text="{Binding Path=DecryptInputText, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Separator Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="4" Background="LightGray" Margin="5, 10, 5, 10"/>
+                        <Button Grid.Row="7" Grid.Column="0" Content="Decrypt" Command="{Binding DecryptCommand}"/>
+                        <TextBox Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2" IsReadOnly="True" Text="{Binding Path=DecryptOutputText, Mode=OneWay}"/>
+                    </Grid>
+                </GroupBox>
+            </StackPanel>
+        </TabItem>
+        <TabItem Header="Hash">
+            <TabItem.DataContext>
+                <viewModels:HashingViewModel/>
+            </TabItem.DataContext>
+            <StackPanel Grid.IsSharedSizeScope="true">
+                <GroupBox>
+                    <GroupBox.Header>
+                        <Label>Hashing</Label>
+                    </GroupBox.Header>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="SecondColumn"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FourthColumn"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0" Content="Input"/>
+                        <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding Path=HashInputText, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Button Grid.Row="1" Grid.Column="0" Content="Hash" Command="{Binding HashCommand}"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" IsReadOnly="True" Text="{Binding Path=HashOutputText, Mode=OneWay}"/>
+                    </Grid>
+                </GroupBox>
+            </StackPanel>
+        </TabItem>
+        <TabItem Header="Mac">
+            <TabItem.DataContext>
+                <viewModels:MacViewModel/>
+            </TabItem.DataContext>
+            <StackPanel Grid.IsSharedSizeScope="true">
+                <GroupBox>
+                    <GroupBox.Header>
+                        <Label>Generate Key</Label>
+                    </GroupBox.Header>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="SecondColumn"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FourthColumn"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Row="0" Grid.Column="0" Content="Generate" Command="{Binding GenerateKeyCommand}"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" IsReadOnly="True" Text="{Binding Path=KeyText, Mode=OneWay}"/>
+                    </Grid>
+                </GroupBox>
+                <GroupBox>
+                    <GroupBox.Header>
+                        <Label>Digest</Label>
+                    </GroupBox.Header>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="SecondColumn"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FourthColumn"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0" Content="Input"/>
+                        <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding Path=DigestInputText, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Button Grid.Row="1" Grid.Column="0" Content="Digest" Command="{Binding DigestCommand}"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" IsReadOnly="True" Text="{Binding Path=DigestOutputText, Mode=OneWay}"/>
+                    </Grid>
+                </GroupBox>
+                <GroupBox>
+                    <GroupBox.Header>
+                        <Label>Verify</Label>
+                    </GroupBox.Header>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="SecondColumn"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FourthColumn"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Row="0" Grid.Column="0" Content="Verify" Command="{Binding VerifyCommand}"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" IsReadOnly="True" Text="{Binding Path=VerifyOutputText, Mode=OneWay}"/>
+                    </Grid>
+                </GroupBox>
+            </StackPanel>
+        </TabItem>
+        <TabItem Header="KDF2">
+            <TabItem.DataContext>
+                <viewModels:Kdf2ViewModel/>
+            </TabItem.DataContext>
+            <StackPanel Grid.IsSharedSizeScope="true">
+                <GroupBox>
+                    <GroupBox.Header>
+                        <Label>Key Derivation</Label>
+                    </GroupBox.Header>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="SecondColumn"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FourthColumn"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0" Content="Input"/>
+                        <RadioButton x:Name="Kdf2InputTextRadio" Grid.Row="0" Grid.Column="1" GroupName="Kdf2Input" Content="Text" IsChecked="True"/>
+                        <TextBox Grid.Row="0" Grid.Column="2" IsEnabled="{Binding IsChecked, ElementName=Kdf2InputTextRadio}" Text="{Binding Path=InputText, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"/>
+                        <RadioButton x:Name="Kdf2InputHexRadio" Grid.Row="1" Grid.Column="1" GroupName="Kdf2Input" Content="Hex" IsChecked="{Binding Path=InputHexIsChecked, Mode=OneWayToSource}"/>
+                        <TextBox Grid.Row="1" Grid.Column="2" IsEnabled="{Binding IsChecked, ElementName=Kdf2InputHexRadio}" Text="{Binding Path=InputHex, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Grid.Row="2" Grid.Column="0" Content="Key Size"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Path=KeySize, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Button Grid.Row="3" Grid.Column="0" Content="Derive" Command="{Binding DeriveCommand}"/>
+                        <TextBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" IsReadOnly="True" Text="{Binding Path=OutputText, Mode=OneWay}"/>
+                    </Grid>
+                </GroupBox>
+            </StackPanel>
+        </TabItem>
+        <TabItem Header="PBKDF2">
+            <TabItem.DataContext>
+                <viewModels:Pbkdf2ViewModel/>
+            </TabItem.DataContext>
+            <StackPanel Grid.IsSharedSizeScope="true">
+                <GroupBox>
+                    <GroupBox.Header>
+                        <Label>Key Derivation</Label>
+                    </GroupBox.Header>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="SecondColumn"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FourthColumn"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0" Content="Password"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Path=PasswordText, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Grid.Row="1" Grid.Column="0" Content="Salt"/>
+                        <RadioButton x:Name="Pbkdf2SaltRandomRadio" Grid.Row="1" Grid.Column="1" GroupName="Pbkdf2Salt" Content="Random" IsChecked="True"/>
+                        <RadioButton x:Name="Pbkdf2SaltHexRadio" Grid.Row="2" Grid.Column="1" GroupName="Pbkdf2Salt" Content="Hex" IsChecked="{Binding Path=SaltHexIsChecked, Mode=OneWayToSource}"/>
+                        <TextBox Grid.Row="2" Grid.Column="2" IsEnabled="{Binding IsChecked, ElementName=Pbkdf2SaltHexRadio}" Text="{Binding Path=SaltHex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Grid.Row="3" Grid.Column="0" Content="Iterations"/>
+                        <TextBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Path=IterationsText, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Button Grid.Row="4" Grid.Column="0" Content="Derive" Command="{Binding DeriveCommand}"/>
+                        <TextBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" IsReadOnly="True" Text="{Binding Path=OutputText, Mode=OneWay}"/>
+                    </Grid>
+                </GroupBox>
+            </StackPanel>
+        </TabItem>
+        <TabItem Header="Asymmetric">
+            <TabItem.DataContext>
+                <viewModels:AsymmetricViewModel/>
+            </TabItem.DataContext>
+            <StackPanel Grid.IsSharedSizeScope="true">
+                <GroupBox>
+                    <GroupBox.Header>
+                        <Label>Key Generation</Label>
+                    </GroupBox.Header>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="SecondColumn"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FourthColumn"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Row="0" Grid.Column="0" Content="Generate" Command="{Binding GenerateCommand}"/>
+                        <Separator Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Background="LightGray" Margin="5, 10, 5, 10"/>
+                        <Label Grid.Row="2" Grid.Column="0" Content="Public Key"/>
+                        <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding Path=PublicKeyText, Mode=OneWay}"/>
+                        <Label Grid.Row="3" Grid.Column="0" Content="Private Key"/>
+                        <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding Path=PrivateKeyText, Mode=OneWay}"/>
+                    </Grid>
+                </GroupBox>
+            </StackPanel>
+        </TabItem>
+        <TabItem Header="Key Agreement">
+            <TabItem.DataContext>
+                <viewModels:EcdhViewModel/>
+            </TabItem.DataContext>
+            <StackPanel Grid.IsSharedSizeScope="true">
+                <GroupBox>
+                    <GroupBox.Header>
+                        <Label>Elliptic Curve Diffie-Hellman (ECDH)</Label>
+                    </GroupBox.Header>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="SecondColumn"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FourthColumn"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0" Content="Alice Public Key"/>
+                        <RadioButton Grid.Row="0" Grid.Column="1" GroupName="PubKey" Content="Random" IsChecked="True"/>
+                        <RadioButton x:Name="KeyAgreementPublicKeyInputRadio" Grid.Row="1" Grid.Column="1" GroupName="PubKey" Content="Input" IsChecked="{Binding Path=PublicKeyInputRadioIsChecked, Mode=OneWayToSource}"/>
+                        <TextBox Grid.Row="1" Grid.Column="2" IsEnabled="{Binding IsChecked, ElementName=IesAlicePrivateKeyInputRadio}" Text="{Binding Path=PublicKeyText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Grid.Row="2" Grid.Column="0" Content="Bob Private Key"/>
+                        <RadioButton Grid.Row="2" Grid.Column="1" GroupName="PriKey" Content="Random" IsChecked="True"/>
+                        <RadioButton x:Name="KeyAgreementPrivateKeyInputRadio" Grid.Row="3" Grid.Column="1" GroupName="PriKey" Content="Input" IsChecked="{Binding Path=PrivateKeyInputRadioIsChecked, Mode=OneWayToSource}"/>
+                        <TextBox Grid.Row="3" Grid.Column="2" IsEnabled="{Binding IsChecked, ElementName=IesBobPublicKeyInputRadio}" Text="{Binding Path=PrivateKeyText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Separator Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Background="LightGray" Margin="5, 10, 5, 10"/>
+                        <Button Grid.Row="5" Grid.Column="0" Content="Derive Secret" Command="{Binding DeriveCommand}"/>
+                        <TextBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" IsEnabled="{Binding IsChecked, ElementName=IesBobPublicKeyInputRadio}" Text="{Binding Path=DerivedOutputText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+                </GroupBox>
+            </StackPanel>
+        </TabItem>
+        <TabItem Header="Signature">
+            <TabItem.DataContext>
+                <viewModels:EcdsaViewModel/>
+            </TabItem.DataContext>
+            <StackPanel Grid.IsSharedSizeScope="true">
+                <GroupBox>
+                    <GroupBox.Header>
+                        <Label>Elliptic Curve Digital Signature Algorithm (ECDSA)</Label>
+                    </GroupBox.Header>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="SecondColumn"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FourthColumn"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0" Content="Private Key"/>
+                        <RadioButton Grid.Row="0" Grid.Column="1" GroupName="PubKey" Content="Random" IsChecked="True"/>
+                        <RadioButton x:Name="SignaturePrivateKeyInputRadio" Grid.Row="1" Grid.Column="1" GroupName="PubKey" Content="Input" IsChecked="{Binding Path=PrivateKeyInputRadioIsChecked, Mode=OneWayToSource}"/>
+                        <TextBox Grid.Row="1" Grid.Column="2" IsEnabled="{Binding IsChecked, ElementName=SignaturePrivateKeyInputRadio}" Text="{Binding Path=PrivateKeyText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Separator Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Background="LightGray" Margin="5, 10, 5, 10"/>
+                        <Label Grid.Row="3" Grid.Column="0" Content="Data"/>
+                        <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding Path=DataText, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Separator Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Background="LightGray" Margin="5, 10, 5, 10"/>
+                        <Button Grid.Row="5" Grid.Column="0" Content="Sign" Command="{Binding SignCommand}"/>
+                        <TextBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Path=SignatureOutputText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Separator Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="4" Background="LightGray" Margin="5, 10, 5, 10"/>
+                        <Label Grid.Row="7" Grid.Column="0" Content="Public Key"/>
+                        <TextBox Grid.Row="7" Grid.Column="2" Text="{Binding Path=PublicKeyText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Separator Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="4" Background="LightGray" Margin="5, 10, 5, 10"/>
+                        <Button Grid.Row="9" Grid.Column="0" Content="Verify" Command="{Binding VerifyCommand}"/>
+                        <TextBox Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Path=VerifyOutputText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+                </GroupBox>
+            </StackPanel>
+        </TabItem>
+        <TabItem Header="IES">
+            <TabItem.DataContext>
+                <viewModels:IesViewModel/>
+            </TabItem.DataContext>
+            <StackPanel Grid.IsSharedSizeScope="true">
+                <GroupBox>
+                    <GroupBox.Header>
+                        <Label>Absio Integrated Encryption Scheme (AbsioIES)</Label>
+                    </GroupBox.Header>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="SecondColumn"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FourthColumn"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0" Content="Alice Private Signing Key"/>
+                        <RadioButton Grid.Row="0" Grid.Column="1" GroupName="PubKey" Content="Random" IsChecked="True"/>
+                        <RadioButton x:Name="IesAlicePrivateKeyInputRadio" Grid.Row="1" Grid.Column="1" GroupName="PubKey" Content="Input" IsChecked="{Binding Path=AliceKeyInputRadioIsChecked, Mode=OneWayToSource}"/>
+                        <TextBox Grid.Row="1" Grid.Column="2" IsEnabled="{Binding IsChecked, ElementName=IesAlicePrivateKeyInputRadio}" Text="{Binding Path=AlicePrivateKeyText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Separator Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Background="LightGray" Margin="5, 10, 5, 10"/>
+                        <Label Grid.Row="3" Grid.Column="0" Content="Bob Public Derivation Key"/>
+                        <RadioButton Grid.Row="3" Grid.Column="1" GroupName="PriKey" Content="Random" IsChecked="True"/>
+                        <RadioButton x:Name="IesBobPublicKeyInputRadio" Grid.Row="4" Grid.Column="1" GroupName="PriKey" Content="Input" IsChecked="{Binding Path=BobKeyInputRadioIsChecked, Mode=OneWayToSource}"/>
+                        <TextBox Grid.Row="4" Grid.Column="2" IsEnabled="{Binding IsChecked, ElementName=IesBobPublicKeyInputRadio}" Text="{Binding Path=BobPublicKeyText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Separator Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="4" Background="LightGray" Margin="5, 10, 5, 10"/>
+                        <Label Grid.Row="6" Grid.Column="0" Content="Text Input"/>
+                        <TextBox Grid.Row="6" Grid.Column="2" Text="{Binding Path=TextInputText, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Separator Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="4" Background="LightGray" Margin="5, 10, 5, 10"/>
+                        <Label Grid.Row="8" Grid.Column="0" Content="Sender ID"/>
+                        <TextBox Grid.Row="8" Grid.Column="2" Text="{Binding Path=SenderIdText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Separator Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="4" Background="LightGray" Margin="5, 10, 5, 10"/>
+                        <Label Grid.Row="10" Grid.Column="0" Content="Object ID"/>
+                        <TextBox Grid.Row="10" Grid.Column="2" Text="{Binding Path=ObjectIdText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Separator Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="4" Background="LightGray" Margin="5, 10, 5, 10"/>
+                        <Button Grid.Row="12" Grid.Column="0" Content="Encrypt" Command="{Binding EncryptCommand}"/>
+                        <TextBox Grid.Row="12" Grid.Column="2" Grid.ColumnSpan="2" Text="{Binding Path=EncryptedOutputText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Separator Grid.Row="13" Grid.Column="0" Grid.ColumnSpan="4" Background="LightGray" Margin="5, 10, 5, 10"/>
+                        <Label Grid.Row="14" Grid.Column="0" Content="Alice Public Signing Key"/>
+                        <TextBox Grid.Row="14" Grid.Column="2" Text="{Binding Path=AlicePublicKeyText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Separator Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="4" Background="LightGray" Margin="5, 10, 5, 10"/>
+                        <Label Grid.Row="16" Grid.Column="0" Content="Bob Private Derivation Key"/>
+                        <TextBox Grid.Row="16" Grid.Column="2" Text="{Binding Path=BobPrivateKeyText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Separator Grid.Row="17" Grid.Column="0" Grid.ColumnSpan="4" Background="LightGray" Margin="5, 10, 5, 10"/>
+                        <Button Grid.Row="18" Grid.Column="0" Content="Decrypt" Command="{Binding DecryptCommand}"/>
+                        <TextBox Grid.Row="18" Grid.Column="2" Grid.ColumnSpan="2" Text="{Binding Path=DecryptedOutputText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBox Grid.Row="19" Grid.Column="2" Grid.ColumnSpan="2" Text="{Binding Path=DecryptedSenderIdText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBox Grid.Row="20" Grid.Column="2" Grid.ColumnSpan="2" Text="{Binding Path=DecryptedObjectIdText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+                </GroupBox>
+            </StackPanel>
+        </TabItem>
+    </TabControl>
+</Window>
+
